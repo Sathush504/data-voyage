@@ -261,13 +261,13 @@
 .shimmer-text {
   background: linear-gradient(
     105deg,
-    #00d4ff  0%,
-    #a78bfa  20%,
+    #14b8a6  0%,
+    #60a5fa  20%,
     #ffffff  38%,
-    #a78bfa  45%,
-    #00d4ff  55%,
-    #a78bfa  70%,
-    #00d4ff  100%
+    #60a5fa  45%,
+    #14b8a6  55%,
+    #60a5fa  70%,
+    #14b8a6  100%
   );
   background-size: 400% auto;
   -webkit-background-clip: text;

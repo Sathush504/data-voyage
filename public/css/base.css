@@ -6,26 +6,26 @@
 /* ── DESIGN TOKENS ── */
 :root {
   /* Colors */
-  --primary:        #0901FA;
-  --primary-dark:   #0600c0;
-  --primary-light:  #3d35fb;
-  --primary-pale:   #e8e7ff;
-  --accent:         #00d4ff;
-  --accent2:        #7c3aed;
+  --primary:        #0b3b8f;
+  --primary-dark:   #0a2f70;
+  --primary-light:  #1652b8;
+  --primary-pale:   #e7eefc;
+  --accent:         #14b8a6;
+  --accent2:        #f59e0b;
   --white:          #ffffff;
-  --off-white:      #f7f8fc;
-  --gray-100:       #eef0f8;
-  --gray-200:       #d4d8ee;
-  --gray-400:       #8892b0;
-  --gray-600:       #4a5568;
-  --gray-800:       #1a2040;
-  --dark:           #060920;
-  --dark2:          #0d1233;
+  --off-white:      #f5f7fb;
+  --gray-100:       #e8edf6;
+  --gray-200:       #cfd7e6;
+  --gray-400:       #6b7386;
+  --gray-600:       #3f485c;
+  --gray-800:       #121826;
+  --dark:           #0b1020;
+  --dark2:          #141a2e;
 
   /* Typography */
-  --font-display: 'Syne', sans-serif;
-  --font-body:    'DM Sans', sans-serif;
-  --font-mono:    'DM Mono', monospace;
+  --font-display: 'Manrope', sans-serif;
+  --font-body:    'Source Sans 3', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
 
   /* Layout */
   --nav-h:      70px;
@@ -33,8 +33,8 @@
   --radius-lg:  22px;
 
   /* Shadows */
-  --shadow:    0 4px 24px rgba(9,1,250,0.10);
-  --shadow-lg: 0 12px 48px rgba(9,1,250,0.16);
+  --shadow:    0 6px 28px rgba(11,59,143,0.12);
+  --shadow-lg: 0 16px 56px rgba(11,59,143,0.18);
 
   /* Glass */
   --glass:        rgba(255,255,255,0.06);

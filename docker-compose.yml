@@ -5,7 +5,7 @@ services:
       - "3000:3000"
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3000
       # Set SESSION_SECRET and other secrets via env or an env_file.
     env_file:
