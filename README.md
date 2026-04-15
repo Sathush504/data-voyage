@@ -130,4 +130,4 @@ Manual test scenarios are tracked in test-cases.md.
 
 ## License
 
-MIT License. See LICENSE.
+All Rights Reserved. See LICENSE.
