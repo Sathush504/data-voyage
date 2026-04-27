@@ -215,18 +215,27 @@ router.post('/', requireLogin,
   ], validateRequest,
   (req, res) => {
 
-    const { title, abstract, domain, keywords, co_authors } = req.body;
+    const { title, abstract, domain, keywords, co_authors, uuid: clientUuid } = req.body;
     const paperFile = req.files?.paper?.[0];
-    const uuid = uuidv4();
+    const uuid = clientUuid || uuidv4();
 
-    const info = db.prepare(
-      `INSERT INTO papers
-         (uuid,user_id,title,abstract,domain,keywords,co_authors,file_path,file_name,status)
-       VALUES (?,?,?,?,?,?,?,?,?,'pending')`
-    ).run(uuid, req.session.userId, title, abstract, domain,
-          keywords || null, co_authors || null,
-          paperFile ? '/uploads/'+paperFile.filename : null,
-          paperFile ? paperFile.originalname : null);
+    let info;
+    try {
+      info = db.prepare(
+        `INSERT INTO papers
+           (uuid,user_id,title,abstract,domain,keywords,co_authors,file_path,file_name,status)
+         VALUES (?,?,?,?,?,?,?,?,?,'pending')`
+      ).run(uuid, req.session.userId, title, abstract, domain,
+            keywords || null, co_authors || null,
+            paperFile ? '/uploads/'+paperFile.filename : null,
+            paperFile ? paperFile.originalname : null);
+    } catch (err) {
+      if (err.message.includes('UNIQUE constraint failed: papers.uuid')) {
+        // Already processed (idempotent)
+        return res.status(201).json({ ok: true, uuid, message: 'Paper already submitted.' });
+      }
+      throw err;
+    }
 
     (req.files?.support || []).forEach(f => {
       db.prepare(

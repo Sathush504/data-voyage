@@ -49,6 +49,12 @@ db.exec(`
     status       TEXT    NOT NULL DEFAULT 'pending',
     views        INTEGER NOT NULL DEFAULT 0,
     downloads    INTEGER NOT NULL DEFAULT 0,
+    ai_summary   TEXT,
+    ai_tags      TEXT,
+    ai_keywords  TEXT,
+    ai_score     INTEGER DEFAULT 0,
+    ai_is_detected INTEGER DEFAULT 0,
+    ai_processing_status TEXT NOT NULL DEFAULT 'idle',
     created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
     updated_at   TEXT    NOT NULL DEFAULT (datetime('now'))
   );
@@ -214,6 +220,14 @@ function addColumnIfMissing(table, col, decl) {
 addColumnIfMissing('users', 'oauth_provider', 'TEXT');
 addColumnIfMissing('users', 'oauth_id', 'TEXT');
 db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oauth ON users(oauth_provider, oauth_id) WHERE oauth_provider IS NOT NULL AND oauth_id IS NOT NULL;`);
+
+// AI Enrichment migrations
+addColumnIfMissing('papers', 'ai_summary', 'TEXT');
+addColumnIfMissing('papers', 'ai_tags', 'TEXT');
+addColumnIfMissing('papers', 'ai_keywords', 'TEXT');
+addColumnIfMissing('papers', 'ai_score', 'INTEGER DEFAULT 0');
+addColumnIfMissing('papers', 'ai_is_detected', 'INTEGER DEFAULT 0');
+addColumnIfMissing('papers', 'ai_processing_status', "TEXT NOT NULL DEFAULT 'idle'");
 
 // Settings migrations
 addColumnIfMissing('users', 'phone', 'TEXT');

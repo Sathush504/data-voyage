@@ -72,6 +72,7 @@
       </li>
       <li><a data-page="profiles">Researchers</a></li>
       <li><a data-page="leaderboard">Leaderboard</a></li>
+      <li><a data-page="docs">Docs</a></li>
       <li><a data-page="contact">Contact</a></li>
       <li><a data-page="upload" style="display:none">Upload</a></li>
       <li><a data-page="admin" id="nav-admin-link" style="display:none" class="nav-cta">Admin ↗</a></li>
@@ -445,7 +446,16 @@
             <button class="search-clear" onclick="clearRepoSearch()" id="repo-search-clear"
               style="display:none">✕</button>
           </div>
-          <div class="repo-results-count" id="repo-results-count"></div>
+          <div class="repo-results-count" id="repo-results-count" style="margin: 0 16px;"></div>
+          
+          <div class="layout-toggles">
+            <button class="layout-btn active" id="view-repo-grid" title="Grid View" onclick="switchRepoView('grid')">
+              <span class="iconify" data-icon="mdi:view-grid"></span>
+            </button>
+            <button class="layout-btn" id="view-repo-list" title="List View" onclick="switchRepoView('list')">
+              <span class="iconify" data-icon="mdi:view-list"></span>
+            </button>
+          </div>
         </div>
 
         <!-- Paper grid -->
@@ -591,30 +601,54 @@
         style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Meet the
         people driving data science forward. Click any card to view their full profile.</p>
     </div>
-    <div class="repo-filters" style="position:sticky;top:var(--nav-h)">
-      <span class="filter-label">Search:</span>
-      <input class="filter-search" id="profiles-search" type="text" placeholder="Search by name…" />
-      <span class="filter-label" style="margin-left:0">Department:</span>
-      <select class="form-select" id="profiles-dept" style="width:220px">
-        <option value="all">All</option>
-        <option value="Data Science">Data Science</option>
-        <option value="Computer Science">Computer Science</option>
-        <option value="Statistics">Statistics</option>
-        <option value="Engineering">Engineering</option>
-        <option value="Mathematics">Mathematics</option>
-      </select>
-      <span class="filter-label" style="margin-left:0">Domain:</span>
-      <select class="form-select" id="profiles-domain" style="width:220px">
-        <option value="all">All</option>
-        <option value="Machine Learning">Machine Learning</option>
-        <option value="Statistics">Statistics</option>
-        <option value="NLP">NLP</option>
-        <option value="Computer Vision">Computer Vision</option>
-        <option value="Graph ML">Graph ML</option>
-        <option value="Bioinformatics">Bioinformatics</option>
-        <option value="Robotics">Robotics</option>
-        <option value="Time Series">Time Series</option>
-      </select>
+    <div class="repo-filters" style="position:sticky;top:70px">
+      <div class="filters-left">
+        <div class="filter-group">
+          <label class="filter-label" for="profiles-search">Search</label>
+          <div class="search-input-wrap">
+            <span class="iconify" data-icon="mdi:magnify"></span>
+            <input class="filter-search" id="profiles-search" type="text" placeholder="Search by name…" />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="profiles-dept">Department</label>
+          <select class="form-select" id="profiles-dept" style="width:220px">
+            <option value="all">All Departments</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Statistics">Statistics</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Mathematics">Mathematics</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="profiles-domain">Domain</label>
+          <select class="form-select" id="profiles-domain" style="width:220px">
+            <option value="all">All Domains</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="NLP">Natural Language Processing</option>
+            <option value="Bio-informatics">Bio-informatics</option>
+            <option value="Statistics">Statistics</option>
+            <option value="Graph Theory">Graph Theory</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filters-right">
+        <div class="filter-group">
+          <span class="filter-label">Layout</span>
+          <div class="layout-toggles">
+            <button class="layout-btn active" id="view-grid" title="Grid View" onclick="switchProfilesView('grid')">
+              <span class="iconify" data-icon="mdi:view-grid"></span>
+            </button>
+            <button class="layout-btn" id="view-list" title="List View" onclick="switchProfilesView('list')">
+              <span class="iconify" data-icon="mdi:view-list"></span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="profiles-grid" id="profiles-grid">
       <div class="loading-placeholder" style="grid-column:1/-1">Loading…</div>
@@ -709,10 +743,22 @@
         style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Ranked
         by reputation points earned through research uploads, approvals, views, and peer endorsements.</p>
     </div>
-    <div style="padding:48px;max-width:860px">
-      <div id="leaderboard-list" class="leaderboard-list">
-        <div class="loading-placeholder">Loading leaderboard…</div>
-      </div>
+    <div class="leaderboard-wrap" style="padding:48px 24px 80px; margin:0 auto; max-width:1000px">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Researcher</th>
+            <th>Reputation</th>
+            <th>Contribution</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-list">
+          <tr>
+            <td colspan="4" class="loading-placeholder">Loading leaderboard…</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -1054,6 +1100,279 @@
      MODALS
 ══════════════════════════════════════════ -->
   <!-- LOGIN -->
+  <!-- ══════════════════════════════════════════
+       DOCS PORTAL (Redesigned)
+  ══════════════════════════════════════════ -->
+  <div id="page-docs" class="page docs-portal-view">
+    <div class="docs-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="docs-sidebar">
+        <div class="docs-nav-container">
+          <div class="docs-nav-group">
+            <div class="docs-nav-label">Overview</div>
+            <a href="#doc-welcome" class="docs-nav-link active" onclick="scrollToDoc('doc-welcome', event)">
+              <span class="iconify" data-icon="mdi:home-variant"></span> Welcome
+            </a>
+            <a href="#doc-platform" class="docs-nav-link" onclick="scrollToDoc('doc-platform', event)">
+              <span class="iconify" data-icon="mdi:information-outline"></span> Platform Overview
+            </a>
+          </div>
+
+          <div class="docs-nav-group">
+            <div class="docs-nav-label">Researcher Guide</div>
+            <a href="#doc-account" class="docs-nav-link" onclick="scrollToDoc('doc-account', event)">
+              <span class="iconify" data-icon="mdi:account-badge-outline"></span> Your Account
+            </a>
+            <a href="#doc-repo" class="docs-nav-link" onclick="scrollToDoc('doc-repo', event)">
+              <span class="iconify" data-icon="mdi:database-search"></span> Research Repo
+            </a>
+            <a href="#doc-upload" class="docs-nav-link" onclick="scrollToDoc('doc-upload', event)">
+              <span class="iconify" data-icon="mdi:cloud-upload"></span> Submission & AI
+            </a>
+          </div>
+
+          <div class="docs-nav-group">
+            <div class="docs-nav-label">Community</div>
+            <a href="#doc-community" class="docs-nav-link" onclick="scrollToDoc('doc-community', event)">
+              <span class="iconify" data-icon="mdi:account-group"></span> Community & XP
+            </a>
+            <a href="#doc-achievements" class="docs-nav-link" onclick="scrollToDoc('doc-achievements', event)">
+              <span class="iconify" data-icon="mdi:trophy-variant"></span> Achievements
+            </a>
+          </div>
+
+          <div class="docs-nav-group">
+            <div class="docs-nav-label">System</div>
+            <a href="#doc-admin" class="docs-nav-link" onclick="scrollToDoc('doc-admin', event)">
+              <span class="iconify" data-icon="mdi:shield-check"></span> Platform Audit
+            </a>
+          </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f1f5f9; border-radius: 12px;">
+          <strong style="display: block; font-size: 0.85rem; margin-bottom: 4px;">Need help?</strong>
+          <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px; line-height: 1.4;">Contact our support team for academic inquiries.</p>
+          <button class="btn-primary btn-xs" data-go="contact" style="width: 100%;">Contact Support</button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="docs-main">
+        <div class="docs-container">
+          
+          <section id="doc-welcome" class="doc-section">
+            <div class="doc-meta-badge">Documentation v1.2</div>
+            <h1 class="doc-title">Welcome to Data Voyage</h1>
+            <p class="doc-intro">
+              Data Voyage is a specialized academic repository designed for university researchers, faculty, and students to securely store, share, and audit data science research.
+            </p>
+
+            <div class="doc-grid-3">
+              <div class="doc-card">
+                <div class="c-icon"><span class="iconify" data-icon="mdi:file-certificate"></span></div>
+                <h3>Certified Research</h3>
+                <p>Multi-layer verification process ensures only high-quality, authentic research is indexed.</p>
+              </div>
+              <div class="doc-card">
+                <div class="c-icon"><span class="iconify" data-icon="mdi:brain"></span></div>
+                <h3>AI Insights</h3>
+                <p>Automated keyword detection and authorship confidence audits for rapid evaluation.</p>
+              </div>
+              <div class="doc-card">
+                <div class="c-icon"><span class="iconify" data-icon="mdi:account-network"></span></div>
+                <h3>Academic Growth</h3>
+                <p>Built-in reputation system and XP leveling to track and reward your research impact.</p>
+              </div>
+            </div>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-platform" class="doc-section">
+            <h2 class="doc-subtitle">Platform Overview</h2>
+            <p>The platform operates on a "Contribution-First" model where every action contributes to your global academic reputation.</p>
+            
+            <div class="doc-audit-process">
+              <div class="audit-node">
+                <div class="node-label">1. Submission & Data Integrity</div>
+                <div class="node-desc">Researchers upload papers along with datasets and code. Our system verifies file integrity.</div>
+              </div>
+              <div class="audit-node">
+                <div class="node-label">2. AI-Powered Audit</div>
+                <div class="node-desc">Every paper is analyzed by our AI engine to determine classification and authorship confidence.</div>
+              </div>
+              <div class="audit-node">
+                <div class="node-label">3. Peer Review & Endorsement</div>
+                <div class="node-desc">Once approved, peers can endorse work, granting the author significant reputation boosts.</div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-account" class="doc-section">
+            <h2 class="doc-subtitle">Managing Your Account</h2>
+            <p>Your researcher account tracks your contributions, reputation, and achievements across the platform.</p>
+            
+            <div class="doc-tip-box">
+              <span class="iconify" data-icon="mdi:lightbulb-on"></span>
+              <div>
+                <strong>Pro Tip:</strong> Completing your profile grants a one-time <strong>+15 Rep and +75 XP</strong> bonus.
+              </div>
+            </div>
+
+            <ul class="doc-styled-list">
+              <li><strong>Experience Points (XP):</strong> Cumulative points that determine your researcher level.</li>
+              <li><strong>Reputation (Rep):</strong> A measure of your standing in the community.</li>
+              <li><strong>Activity Streaks:</strong> Consistent contributions build streaks for XP multipliers.</li>
+            </ul>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-repo" class="doc-section">
+            <h2 class="doc-subtitle">The Research Repository</h2>
+            <p>A comprehensive, searchable database of academic papers, datasets, and dashboards.</p>
+            
+            <div class="doc-visual-step">
+              <div class="v-step">1</div>
+              <div class="v-body">
+                <h4>Search & Discovery</h4>
+                <p>Filter by domain (Machine Learning, NLP, etc.) or use keywords to find relevant work.</p>
+              </div>
+            </div>
+            <div class="doc-visual-step">
+              <div class="v-step">2</div>
+              <div class="v-body">
+                <h4>Data Inspection</h4>
+                <p>View source code and datasets directly within the platform's inspector.</p>
+              </div>
+            </div>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-upload" class="doc-section">
+            <h2 class="doc-subtitle">Submission & AI Audit</h2>
+            <p>Our submission process is designed to capture the full scope of your research.</p>
+            <div class="doc-alert-callout warning">
+              <div class="c-icon"><span class="iconify" data-icon="mdi:alert-circle"></span></div>
+              <div class="c-text">Papers with low authorship confidence scores are automatically flagged for manual review.</div>
+            </div>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-community" class="doc-section">
+            <h2 class="doc-subtitle">Community & XP</h2>
+            <p>Engagement drives discovery. High-quality papers often receive peer endorsements.</p>
+            
+            <div class="doc-stat-callout">
+              <div class="stat-item">
+                <div class="stat-num">50 XP</div>
+                <div class="stat-label">Submission Approved</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-num">30 XP</div>
+                <div class="stat-label">Per Endorsement</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-num">75 XP</div>
+                <div class="stat-label">Profile Completion</div>
+              </div>
+            </div>
+
+            <h4 style="margin: 32px 0 16px; font-size: 1.1rem; font-weight: 700;">XP & Reputation Breakdown</h4>
+            <div class="doc-table-wrapper">
+              <table class="doc-table">
+                <thead>
+                  <tr>
+                    <th>Action</th>
+                    <th>Reputation</th>
+                    <th>Experience (XP)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Account Registration</td><td>+10 Rep</td><td>+50 XP</td></tr>
+                  <tr><td>Paper Submission</td><td>+5 Rep</td><td>+20 XP</td></tr>
+                  <tr><td>Paper Approval</td><td>+50 Rep</td><td>+150 XP</td></tr>
+                  <tr><td>Every 10 Views</td><td>+1 Rep</td><td>+2 XP</td></tr>
+                  <tr><td>Paper Download</td><td>+2 Rep</td><td>+5 XP</td></tr>
+                  <tr><td>Receive Endorsement</td><td>+10 Rep</td><td>+30 XP</td></tr>
+                  <tr><td>Profile Completion</td><td>+15 Rep</td><td>+75 XP</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-achievements" class="doc-section">
+            <h2 class="doc-subtitle">Achievements & Milestones</h2>
+            <p>Earn unique badges and reputation bonuses by reaching specific milestones.</p>
+            
+            <div class="ach-tier-section">
+              <div class="ach-tier-header">Research Milestones</div>
+              <div class="ach-grid-modern">
+                <div class="ach-card-pro">
+                  <div class="ach-pro-icon" style="background:#fef3c7;color:#d97706">🔬</div>
+                  <div class="ach-pro-content">
+                    <div class="ach-pro-name">Rising Researcher</div>
+                    <p>Have 3 papers approved by the admin team.</p>
+                    <span class="ach-pro-reward">+200 XP</span>
+                  </div>
+                </div>
+                <div class="ach-card-pro">
+                  <div class="ach-pro-icon" style="background:#e0f2fe;color:#0284c7">👁</div>
+                  <div class="ach-pro-content">
+                    <div class="ach-pro-name">Notable Work</div>
+                    <p>Reach 100 total views across all your publications.</p>
+                    <span class="ach-pro-reward">+150 XP</span>
+                  </div>
+                </div>
+                <div class="ach-card-pro">
+                  <div class="ach-pro-icon" style="background:#fef2f2;color:#dc2626">🔥</div>
+                  <div class="ach-pro-content">
+                    <div class="ach-pro-name">7-Day Streak</div>
+                    <p>Maintain activity for 1 consecutive week.</p>
+                    <span class="ach-pro-reward">+100 XP</span>
+                  </div>
+                </div>
+                <div class="ach-card-pro">
+                  <div class="ach-pro-icon" style="background:#ede9fe;color:#7c3aed">✨</div>
+                  <div class="ach-pro-content">
+                    <div class="ach-pro-name">Prolific Author</div>
+                    <p>Publish 10 research papers to the repository.</p>
+                    <span class="ach-pro-reward">+500 XP</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr class="doc-divider">
+
+          <section id="doc-admin" class="doc-section">
+            <h2 class="doc-subtitle">Platform Audit & Integrity</h2>
+            <p>Transparency is key to academic trust. Our Audit log provides a real-time view of administrative actions.</p>
+            <div class="doc-tip-box">
+              <span class="iconify" data-icon="mdi:shield-check"></span>
+              <div>
+                <strong>Audit Logs:</strong> Every approval, rejection, and user role change is logged with a timestamp.
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="modal-login" style="display:none">
     <div class="modal-box">
       <button class="modal-close" data-close-modal>✕</button>

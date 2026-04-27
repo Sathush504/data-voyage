@@ -584,7 +584,7 @@ function renderPaperDetail(p) {
         </div>
 
         <div class="paper-view-sidebar">
-          ${p.ai_summary ? `
+          ${p.ai_processing_status === 'completed' ? `
             <div class="sidebar-box ai-insight-box">
               <h4 class="sidebar-title ai-title">
                 <span class="iconify" data-icon="mdi:robot-outline"></span> AI Insights
@@ -597,6 +597,29 @@ function renderPaperDetail(p) {
                   ${p.ai_tags.split(',').map(t => `<span class="ai-tag">${escapeHtml(t.trim())}</span>`).join('')}
                 </div>
               ` : ''}
+            </div>
+
+            <div class="sidebar-box ai-audit-box">
+              <h4 class="sidebar-title" style="color:var(--gray-800);display:flex;align-items:center;gap:8px">
+                <span class="iconify" data-icon="mdi:shield-check-outline"></span> AI Content Audit
+              </h4>
+              <div class="ai-audit-content">
+                <div class="ai-score-row">
+                  <div class="ai-score-label">AI Author Confidence</div>
+                  <div class="ai-score-bar">
+                    <div class="ai-score-fill ${p.ai_is_detected ? 'is-danger' : ''}" style="width: ${p.ai_score}%"></div>
+                  </div>
+                  <div class="ai-score-value">${p.ai_score}%</div>
+                </div>
+                <div class="ai-verdict ${p.ai_is_detected ? 'is-danger' : 'is-success'}">
+                  <span class="iconify" data-icon="${p.ai_is_detected ? 'mdi:alert-decagram' : 'mdi:check-decagram'}"></span>
+                  ${p.ai_is_detected ? 'AI-Generated Content Likely' : 'Human Author Verified'}
+                </div>
+                <div class="ai-keywords-box">
+                   <div class="ai-keywords-label">Auto-Detected Keywords</div>
+                   <div class="ai-keywords-list">${escapeHtml(p.ai_keywords || 'N/A')}</div>
+                </div>
+              </div>
             </div>
           ` : ''}
 
@@ -1037,6 +1060,50 @@ document.getElementById('profiles-dept')?.addEventListener('change', e => {
 document.getElementById('profiles-domain')?.addEventListener('change', e => {
   profileState.domain = e.target.value || 'all';
   loadProfiles();
+});
+
+// ── VIEW SWITCHING ─────────────────────────────────────────────
+window.switchProfilesView = function(mode) {
+  const g = document.getElementById('profiles-grid');
+  if (!g) return;
+  const gridBtn = document.getElementById('view-grid');
+  const listBtn = document.getElementById('view-list');
+  if (mode === 'list') {
+    g.classList.add('list-view');
+    listBtn?.classList.add('active');
+    gridBtn?.classList.remove('active');
+  } else {
+    g.classList.remove('list-view');
+    gridBtn?.classList.add('active');
+    listBtn?.classList.remove('active');
+  }
+  localStorage.setItem('profiles_view_mode', mode);
+};
+
+window.switchRepoView = function(mode) {
+  const g = document.getElementById('repo-grid');
+  if (!g) return;
+  const gridBtn = document.getElementById('view-repo-grid');
+  const listBtn = document.getElementById('view-repo-list');
+  if (mode === 'list') {
+    g.classList.add('list-view');
+    listBtn?.classList.add('active');
+    gridBtn?.classList.remove('active');
+  } else {
+    g.classList.remove('list-view');
+    gridBtn?.classList.add('active');
+    listBtn?.classList.remove('active');
+  }
+  localStorage.setItem('repo_view_mode', mode);
+};
+
+// Apply saved view modes on load
+document.addEventListener('DOMContentLoaded', () => {
+  const savedProfiles = localStorage.getItem('profiles_view_mode');
+  if (savedProfiles) switchProfilesView(savedProfiles);
+  
+  const savedRepo = localStorage.getItem('repo_view_mode');
+  if (savedRepo) switchRepoView(savedRepo);
 });
 
 // ── VIEW A RESEARCHER PROFILE ─────────────────────────────────
@@ -1772,28 +1839,34 @@ async function loadLeaderboard() {
     const medals = ['🥇', '🥈', '🥉'];
     c.innerHTML = users.length
       ? users.map((u, i) => `
-        <div class="leaderboard-item rank-${Math.min(i + 1, 4)}" onclick="viewResearcherProfile('${u.uuid}')">
-          <div class="lb-rank ${i < 3 ? 'top-3' : ''}">${i < 3 ? medals[i] : i + 1}</div>
-          <div class="lb-avatar">
-            ${u.avatar_url
-          ? `<img src="${u.avatar_url}" alt="${escapeHtml(u.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
-          : `<span>${initials(u.name)}</span>`}
-          </div>
-          <div class="lb-info">
-            <div class="lb-name">${escapeHtml(u.name)}</div>
-            <div class="lb-dept">${escapeHtml(u.department) || 'Data Science'} · Lv.${u.level || 1} ${levelLabel(u.level || 1)}</div>
-            <div class="lb-badges">
-              ${(u.badge_count > 0 ? Array(Math.min(u.badge_count, 5)).fill('<span class="iconify" data-icon="mdi:award-outline"></span>') : []).join('')}
+        <tr class="rank-${Math.min(i + 1, 4)}" onclick="viewResearcherProfile('${u.uuid}')">
+          <td>
+            <div class="lb-rank ${i < 3 ? 'top-3' : ''}">${i < 3 ? medals[i] : i + 1}</div>
+          </td>
+          <td>
+            <div class="lb-user-cell">
+              <div class="lb-avatar">
+                ${u.avatar_url ? `<img src="${u.avatar_url}" alt="${escapeHtml(u.name)}"/>` : `<span>${initials(u.name)}</span>`}
+              </div>
+              <div class="lb-user-info">
+                <div class="lb-name">${escapeHtml(u.name)}</div>
+                <div class="lb-dept">${escapeHtml(u.department) || 'Data Science'} · Lv.${u.level || 1}</div>
+              </div>
             </div>
-          </div>
-          <div class="lb-stats">
+          </td>
+          <td>
             <div class="lb-rep">${(u.reputation || 0).toLocaleString()}</div>
-            <div class="lb-level">${u.papers || 0} papers · ${u.badge_count || 0} badges</div>
-          </div>
-        </div>`).join('')
-      : '<p style="color:var(--gray-400);text-align:center;padding:40px">No researchers yet.</p>';
+          </td>
+          <td>
+            <div class="lb-contribution">
+              <span class="iconify" data-icon="mdi:award-outline"></span>
+              ${u.papers || 0} papers · ${u.badge_count || 0} badges
+            </div>
+          </td>
+        </tr>`).join('')
+      : '<tr><td colspan="4" style="color:var(--gray-400);text-align:center;padding:40px">No researchers yet.</td></tr>';
     observeReveals();
-  } catch { c.innerHTML = '<p style="color:var(--gray-400);text-align:center">Error loading leaderboard.</p>'; }
+  } catch { c.innerHTML = '<tr><td colspan="4" style="color:var(--gray-400);text-align:center;padding:40px">Error loading leaderboard.</td></tr>'; }
 }
 
 // ── MY PAPERS ─────────────────────────────────────────────────
@@ -1892,11 +1965,16 @@ function initUploadPage() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
+    if (btn.disabled) return; // Prevent concurrent submissions
     btn.disabled = true;
     const oldText = btn.innerHTML;
     btn.innerHTML = 'Uploading…';
 
     const formData = new FormData(form);
+    // Add a client-side UUID to prevent double-insertions on retries
+    const clientUuid = crypto.randomUUID();
+    formData.append('uuid', clientUuid);
+
     try {
       const res = await API.uploadPaper(formData);
       if (res.ok) {
@@ -2253,3 +2331,44 @@ function initContactPage() {
     if (btn) btn.disabled = false;
   });
 }
+
+/* ── DOCS FUNCTIONS ── */
+window.scrollToDoc = function(id, e) {
+  if (e) e.preventDefault();
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+    // Update active link
+    document.querySelectorAll('.docs-nav-link').forEach(l => l.classList.remove('active'));
+    const link = document.querySelector(`a[href="#${id}"]`);
+    if (link) link.classList.add('active');
+  }
+};
+
+// Intersection Observer for Docs sidebar
+function initDocsObserver() {
+  const options = { threshold: 0.2, rootMargin: '-100px 0px -40% 0px' };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        document.querySelectorAll('.docs-nav-link').forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }, options);
+
+  document.querySelectorAll('.doc-section').forEach(section => {
+    observer.observe(section);
+  });
+}
+
+// Ensure it runs when docs page is shown
+const originalShowPage = window.showPage;
+window.showPage = function(pageId, data) {
+  originalShowPage(pageId, data);
+  if (pageId === 'docs') {
+    setTimeout(initDocsObserver, 100);
+  }
+};
