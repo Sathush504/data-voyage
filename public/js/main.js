@@ -313,8 +313,13 @@ document.addEventListener('click', e => {
 });
 
 // ── HELPERS ───────────────────────────────────────────────────
+function escapeHtml(str) {
+  if (!str) return '';
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return String(str).replace(/[&<>"']/g, m => map[m]);
+}
 function initials(name) {
-  return (name || '??').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  return (escapeHtml(name) || '??').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 function relDate(s) {
   const d = new Date(s), now = new Date(), diff = Math.floor((now - d) / 864e5);
@@ -377,25 +382,30 @@ function xpForNextLevel(xp) {
 function buildCard(p) {
   const tags = (p.keywords || p.domain || '').split(',').slice(0, 3);
   const canEndorse = Auth.isLoggedIn() && p.author_uuid !== Auth.user?.uuid;
+  const title = escapeHtml(p.title);
+  const abstract = escapeHtml(p.abstract);
+  const domain = escapeHtml(p.domain);
+  const authorName = escapeHtml(p.author_name);
+  
   return `
   <div class="research-card reveal" onclick="openPaperDetail('${p.uuid}')">
     <div class="card-img" style="background:${dcol(p.domain)}">
       <svg width="180" height="120" viewBox="0 0 180 120" opacity="0.3"><circle cx="90" cy="60" r="40" fill="none" stroke="white" stroke-width="1.5"/><circle cx="90" cy="60" r="20" fill="none" stroke="white" stroke-width="1"/><circle cx="90" cy="60" r="8" fill="white"/></svg>
       <div class="card-img-overlay"></div>
-      <div class="card-tag">${p.domain || 'Research'}</div>
+      <div class="card-tag">${domain || 'Research'}</div>
     </div>
     <div class="card-body">
       <div class="card-meta">
         <div class="card-author-avatar" style="background:${dcol(p.domain)};cursor:pointer" onclick="event.stopPropagation(); viewResearcherProfile('${p.author_uuid}')">
           ${p.author_avatar ? `<img src="${p.author_avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>` : initials(p.author_name)}
         </div>
-        <div class="card-author" style="cursor:pointer" onclick="event.stopPropagation(); viewResearcherProfile('${p.author_uuid}')">${p.author_name || 'Unknown'}</div>
+        <div class="card-author" style="cursor:pointer" onclick="event.stopPropagation(); viewResearcherProfile('${p.author_uuid}')">${authorName || 'Unknown'}</div>
         <div class="card-date">${relDate(p.created_at)}</div>
       </div>
-      <div class="card-title">${p.title}</div>
-      <div class="card-excerpt">${p.abstract}</div>
+      <div class="card-title">${title}</div>
+      <div class="card-excerpt">${abstract}</div>
       <div class="card-footer">
-        <div class="card-tags">${tags.map(t => `<span class="tag-chip">${t.trim()}</span>`).join('')}</div>
+        <div class="card-tags">${tags.map(t => `<span class="tag-chip">${escapeHtml(t.trim())}</span>`).join('')}</div>
         <div style="display:flex;align-items:center;gap:6px">
           ${canEndorse ? `<button class="card-action" title="Endorse this paper" onclick="endorsePaper('${p.uuid}',this,event)" style="font-size:0.75rem;width:auto;padding:0 10px;gap:6px"><span class="iconify" data-icon="mdi:handshake-outline"></span> ${p.endorsements || 0}</button>` : `<span style="font-size:0.75rem;color:var(--gray-400);padding:0 6px;display:inline-flex;align-items:center;gap:6px"><span class="iconify" data-icon="mdi:handshake-outline"></span> ${p.endorsements || 0}</span>`}
           <button class="card-action" onclick="event.stopPropagation(); openPaperDetail('${p.uuid}')">→</button>
@@ -455,10 +465,10 @@ function renderPaperDetail(p) {
   return `
     <div class="paper-detail-head">
       <div>
-        <div class="paper-detail-domain">${p.domain || 'Research'}</div>
-        <div class="paper-detail-title">${p.title}</div>
+        <div class="paper-detail-domain">${escapeHtml(p.domain) || 'Research'}</div>
+        <div class="paper-detail-title">${escapeHtml(p.title)}</div>
         <div class="paper-detail-meta">
-          <span>By <strong style="color:var(--gray-800)">${p.author_name || 'Unknown'}</strong></span>
+          <span>By <strong style="color:var(--gray-800)">${escapeHtml(p.author_name) || 'Unknown'}</strong></span>
           ${p.created_at ? `<span>· ${fmtDate(p.created_at)}</span>` : ''}
           <span style="display:inline-flex;align-items:center;gap:6px">· <span class="iconify" data-icon="mdi:eye-outline"></span> ${(p.views || 0).toLocaleString()} views</span>
           <span style="display:inline-flex;align-items:center;gap:6px">· <span class="iconify" data-icon="mdi:download"></span> ${(p.downloads || 0).toLocaleString()} downloads</span>
@@ -472,18 +482,18 @@ function renderPaperDetail(p) {
 
     <div class="paper-detail-section">
       <div class="paper-detail-section-title">Abstract</div>
-      <div class="paper-detail-text">${(p.abstract || '').replace(/\n/g,'<br/>')}</div>
+      <div class="paper-detail-text">${escapeHtml(p.abstract || '').replace(/\n/g,'<br/>')}</div>
     </div>
 
     <div class="paper-detail-grid">
       <div class="paper-detail-section">
         <div class="paper-detail-section-title">Authors</div>
-        <div class="paper-detail-text">${authors.filter(Boolean).map(a => `<div style="margin-bottom:6px">• ${a}</div>`).join('') || '—'}</div>
+        <div class="paper-detail-text">${authors.filter(Boolean).map(a => `<div style="margin-bottom:6px">• ${escapeHtml(a)}</div>`).join('') || '—'}</div>
       </div>
       <div class="paper-detail-section">
         <div class="paper-detail-section-title">Citation</div>
         <div class="paper-detail-cite">
-          <div class="paper-detail-cite-text" id="paper-cite-text">${cite}</div>
+          <div class="paper-detail-cite-text" id="paper-cite-text">${escapeHtml(cite)}</div>
           <button class="btn-ghost btn-sm" style="color:var(--gray-600);border-color:var(--gray-200)" onclick="copyCitation()">Copy</button>
         </div>
       </div>
@@ -495,8 +505,8 @@ function renderPaperDetail(p) {
         <div class="paper-files">
           ${supports.map(f => `
             <a class="paper-file" href="/api/research/${p.uuid}/files/${f.id}/download">
-              <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--gray-400)">${(f.file_type || 'file').toUpperCase()}</span>
-              <span style="color:var(--gray-800);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.file_name}</span>
+              <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--gray-400)">${escapeHtml(f.file_type || 'file').toUpperCase()}</span>
+              <span style="color:var(--gray-800);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(f.file_name)}</span>
               <span style="margin-left:auto;color:var(--primary);font-weight:700;display:inline-flex;align-items:center;gap:6px"><span class="iconify" data-icon="mdi:download"></span> Download</span>
             </a>
           `).join('')}
@@ -570,9 +580,9 @@ async function loadHomeNews() {
           <svg viewBox="0 0 400 200" opacity="0.2" style="position:absolute;inset:0;width:100%;height:100%"><path d="M0 100 Q100 50 200 100 T400 100" fill="none" stroke="white" stroke-width="3"/></svg>
         </div>
         <div class="news-body">
-          <div class="news-category">${n.category}</div>
-          <div class="news-title">${n.title}</div>
-          <div class="news-excerpt">${n.summary}</div>
+          <div class="news-category">${escapeHtml(n.category)}</div>
+          <div class="news-title">${escapeHtml(n.title)}</div>
+          <div class="news-excerpt">${escapeHtml(n.summary)}</div>
           <div class="news-date">${fmtDate(n.created_at)}</div>
         </div>
       </div>`).join('') || '<p style="color:var(--gray-400);grid-column:1/-1;text-align:center">No news yet.</p>';
@@ -659,19 +669,19 @@ async function loadNewsPage() {
       <div class="featured-article reveal" onclick="openNewsDetail('${f.uuid}')">
         <div class="featured-img"><svg viewBox="0 0 500 400" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.18"><path d="M0 200 Q125 100 250 200 T500 200" fill="none" stroke="white" stroke-width="3"/><circle cx="250" cy="200" r="60" fill="none" stroke="white" stroke-width="2"/></svg></div>
         <div class="featured-content">
-          <div class="featured-badge">${f.category}</div>
-          <div class="featured-title">${f.title}</div>
-          <div class="featured-excerpt">${f.summary}</div>
-          <div class="featured-byline">By ${f.author_name} · ${fmtDate(f.created_at)}</div>
+          <div class="featured-badge">${escapeHtml(f.category)}</div>
+          <div class="featured-title">${escapeHtml(f.title)}</div>
+          <div class="featured-excerpt">${escapeHtml(f.summary)}</div>
+          <div class="featured-byline">By ${escapeHtml(f.author_name)} · ${fmtDate(f.created_at)}</div>
         </div>
       </div>`;
     if (list) list.innerHTML = items.slice(1).map((n, i) => `
       <div class="news-card reveal delay-${(i % 3) + 1}" onclick="openNewsDetail('${n.uuid}')">
         <div class="news-img"><svg viewBox="0 0 300 160" opacity="0.2" style="position:absolute;inset:0;width:100%;height:100%"><circle cx="150" cy="80" r="50" fill="none" stroke="white" stroke-width="2"/></svg></div>
         <div class="news-body">
-          <div class="news-category">${n.category}</div>
-          <div class="news-title">${n.title}</div>
-          <div class="news-excerpt">${n.summary}</div>
+          <div class="news-category">${escapeHtml(n.category)}</div>
+          <div class="news-title">${escapeHtml(n.title)}</div>
+          <div class="news-excerpt">${escapeHtml(n.summary)}</div>
           <div class="news-date">${fmtDate(n.created_at)}</div>
         </div>
       </div>`).join('');
@@ -719,12 +729,12 @@ window.openNewsDetail = async function(uuid) {
     if (!n) { box.innerHTML = '<p style="padding:24px;color:var(--gray-400)">Article not found.</p>'; return; }
     box.innerHTML = `
       <div class="news-detail-head">
-        <div class="news-detail-cat">${n.category || 'News'}</div>
-        <div class="news-detail-title">${n.title}</div>
-        <div class="news-detail-meta">By ${n.author_name || 'Data Voyage'} · ${fmtDate(n.created_at)}</div>
+        <div class="news-detail-cat">${escapeHtml(n.category) || 'News'}</div>
+        <div class="news-detail-title">${escapeHtml(n.title)}</div>
+        <div class="news-detail-meta">By ${escapeHtml(n.author_name) || 'Data Voyage'} · ${fmtDate(n.created_at)}</div>
       </div>
       <div class="news-detail-body">
-        ${(n.body || n.summary || '').replace(/\n/g,'<br/>')}
+        ${escapeHtml(n.body || n.summary || '').replace(/\n/g,'<br/>')}
       </div>`;
   } catch (e) {
     box.innerHTML = `<p style="padding:24px;color:var(--gray-400)">Error: ${e.message}</p>`;
@@ -745,13 +755,13 @@ async function loadProfiles() {
           <div class="profile-avatar" style="background:${dcol(u.department || '')}">
             ${u.avatar_url ? `<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>` : initials(u.name)}
           </div>
-          <div class="profile-name">${u.name}</div>
-          <div class="profile-role">${u.role === 'admin' ? 'Administrator' : 'Researcher'} · ${u.department || 'Data Science'}</div>
+          <div class="profile-name">${escapeHtml(u.name)}</div>
+          <div class="profile-role">${u.role === 'admin' ? 'Administrator' : 'Researcher'} · ${escapeHtml(u.department) || 'Data Science'}</div>
           <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px">
             <span style="background:rgba(9,1,250,0.08);color:var(--primary);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:700">Lv.${u.level || 1}</span>
             <span style="font-size:0.78rem;color:var(--gray-400)">${levelLabel(u.level || 1)}</span>
           </div>
-          <div class="profile-bio">${u.bio || 'University data science researcher.'}</div>
+          <div class="profile-bio">${escapeHtml(u.bio) || 'University data science researcher.'}</div>
           <div class="profile-stats">
             <div class="pstat"><div class="pstat-val">${u.paper_count || 0}</div><div class="pstat-lbl">Papers</div></div>
             <div class="pstat"><div class="pstat-val">${(u.reputation || 0).toLocaleString()}</div><div class="pstat-lbl">Rep</div></div>
@@ -1176,16 +1186,16 @@ function buildFullProfileHTML(u, rep, xp, isOwn, showEditForm) {
             </label>` : ''}
         </div>
         <div class="profile-hero-info">
-          <div class="profile-hero-name">${u.name}</div>
+          <div class="profile-hero-name">${escapeHtml(u.name)}</div>
           <div class="profile-hero-role">
             <span style="display:inline-flex;align-items:center;gap:8px">${u.role === 'admin' ? `<span class="iconify" data-icon="mdi:shield-account-outline"></span> Administrator` : `<span class="iconify" data-icon="mdi:flask-outline"></span> Researcher`}</span>
-            ${u.department ? `<span style="opacity:0.4">·</span><span>${u.department}</span>` : ''}
+            ${u.department ? `<span style="opacity:0.4">·</span><span>${escapeHtml(u.department)}</span>` : ''}
             <span class="profile-level-badge"><span class="iconify" data-icon="mdi:hexagon-outline"></span> Level ${u.level || 1} · ${levelLabel(u.level || 1)}</span>
           </div>
-          ${u.bio ? `<div class="profile-hero-bio">${u.bio}</div>` : ''}
+          ${u.bio ? `<div class="profile-hero-bio">${escapeHtml(u.bio)}</div>` : ''}
           <div class="profile-hero-links">
-            ${u.website ? `<a class="profile-link-btn" href="${u.website}" target="_blank" style="gap:8px"><span class="iconify" data-icon="mdi:web"></span> Website</a>` : ''}
-            ${u.twitter ? `<a class="profile-link-btn" href="https://twitter.com/${u.twitter.replace('@','')}" target="_blank" style="gap:8px"><span class="iconify" data-icon="mdi:twitter"></span> ${u.twitter}</a>` : ''}
+            ${u.website ? `<a class="profile-link-btn" href="${escapeHtml(u.website)}" target="_blank" style="gap:8px"><span class="iconify" data-icon="mdi:web"></span> Website</a>` : ''}
+            ${u.twitter ? `<a class="profile-link-btn" href="https://twitter.com/${escapeHtml(u.twitter).replace('@','')}" target="_blank" style="gap:8px"><span class="iconify" data-icon="mdi:twitter"></span> ${escapeHtml(u.twitter)}</a>` : ''}
             ${isOwn ? `<button class="profile-link-btn" onclick="document.getElementById('edit-profile-tab').click()" style="gap:8px"><span class="iconify" data-icon="mdi:pencil-outline"></span> Edit Profile</button>` : ''}
             ${isOwn ? `<button class="profile-link-btn" data-go="settings" style="gap:8px"><span class="iconify" data-icon="mdi:cog-outline"></span> Settings</button>` : ''}
           </div>
@@ -1324,7 +1334,7 @@ function buildFullProfileHTML(u, rep, xp, isOwn, showEditForm) {
               return `<div class="activity-item">
                 <div class="activity-icon ${isBadge ? 'badge' : 'positive'}">${isBadge ? '<span class="iconify" data-icon="mdi:award-outline"></span>' : '<span class="iconify" data-icon="mdi:star-outline"></span>'}</div>
                 <div class="activity-body">
-                  <div class="activity-note">${l.note || l.action.replace(/_/g,' ')}</div>
+                  <div class="activity-note">${escapeHtml(l.note) || l.action.replace(/_/g,' ')}</div>
                   <div class="activity-meta">${relDate(l.created_at)}</div>
                 </div>
                 <div class="activity-points">+${l.points} rep · +${l.xp} XP</div>
@@ -1431,12 +1441,12 @@ async function loadLeaderboard() {
           <div class="lb-rank ${i < 3 ? 'top-3' : ''}">${i < 3 ? medals[i] : i + 1}</div>
           <div class="lb-avatar">
             ${u.avatar_url
-              ? `<img src="${u.avatar_url}" alt="${u.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
+              ? `<img src="${u.avatar_url}" alt="${escapeHtml(u.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`
               : `<span>${initials(u.name)}</span>`}
           </div>
           <div class="lb-info">
-            <div class="lb-name">${u.name}</div>
-            <div class="lb-dept">${u.department || 'Data Science'} · Lv.${u.level || 1} ${levelLabel(u.level || 1)}</div>
+            <div class="lb-name">${escapeHtml(u.name)}</div>
+            <div class="lb-dept">${escapeHtml(u.department) || 'Data Science'} · Lv.${u.level || 1} ${levelLabel(u.level || 1)}</div>
             <div class="lb-badges">
               ${(u.badge_count > 0 ? Array(Math.min(u.badge_count, 5)).fill('<span class="iconify" data-icon="mdi:award-outline"></span>') : []).join('')}
             </div>
@@ -1463,13 +1473,13 @@ async function loadMyPapers() {
           <div class="research-card reveal">
             <div class="card-img" style="background:${dcol(p.domain)}">
               <div class="card-img-overlay"></div>
-              <div class="card-tag">${p.domain}</div>
+              <div class="card-tag">${escapeHtml(p.domain)}</div>
               <div style="position:absolute;top:14px;right:14px">
                 <span class="status-badge status-${p.status}">${p.status}</span>
               </div>
             </div>
             <div class="card-body">
-              <div class="card-title">${p.title}</div>
+              <div class="card-title">${escapeHtml(p.title)}</div>
               <div class="card-meta" style="margin-top:8px">
                 <span style="font-size:0.78rem;color:var(--gray-400);display:inline-flex;align-items:center;gap:6px"><span class="iconify" data-icon="mdi:eye-outline"></span> ${p.views} · <span class="iconify" data-icon="mdi:download"></span> ${p.downloads}</span>
                 <span class="card-date">${relDate(p.created_at)}</span>
@@ -1531,9 +1541,9 @@ async function loadAdminSubmissions(status = 'all', tbodyId = 'admin-submissions
     if (!d.rows?.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px">No submissions.</td></tr>'; return; }
     tb.innerHTML = d.rows.map(p => `
       <tr>
-        <td title="${p.title}">${p.title.length > 40 ? p.title.slice(0, 40) + '…' : p.title}</td>
-        <td>${p.author_name}</td>
-        <td>${p.domain}</td>
+        <td title="${escapeHtml(p.title)}">${escapeHtml(p.title).length > 40 ? escapeHtml(p.title).slice(0, 40) + '…' : escapeHtml(p.title)}</td>
+        <td>${escapeHtml(p.author_name)}</td>
+        <td>${escapeHtml(p.domain)}</td>
         <td>${new Date(p.created_at).toLocaleDateString('en-GB')}</td>
         <td><span class="status-badge status-${p.status}">${p.status}</span></td>
         <td>
@@ -1570,8 +1580,8 @@ async function loadAdminUsers() {
     const users = await API.getAdminUsers();
     tb.innerHTML = users.map(u => `
       <tr>
-        <td><strong>${u.name}</strong></td>
-        <td style="font-size:0.82rem">${u.email}</td>
+        <td><strong>${escapeHtml(u.name)}</strong></td>
+        <td style="font-size:0.82rem">${escapeHtml(u.email)}</td>
         <td>${u.role}</td>
         <td><strong style="color:var(--primary)">${(u.reputation||0).toLocaleString()}</strong></td>
         <td>Lv.${u.level||1}</td>
@@ -1602,6 +1612,23 @@ window.adminDeleteUser = async function(id) {
 window.addEventListener('DOMContentLoaded', async () => {
   await Auth.init();
   await loadUserSettings();
+
+  // Handle OAuth / Auth redirects
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('auth')) {
+    const status = params.get('auth');
+    if (status === 'ok') {
+      Toast.show('Successfully signed in!', 'success');
+    } else if (status === 'error') {
+      Toast.show(params.get('msg') || 'Authentication failed', 'error');
+    }
+    // Clean URL
+    const url = new URL(window.location);
+    url.searchParams.delete('auth');
+    url.searchParams.delete('msg');
+    window.history.replaceState({}, '', url);
+  }
+
   const home = document.getElementById('page-home');
   if (home && !document.querySelector('.page.active')) {
     // Deep links (password reset)

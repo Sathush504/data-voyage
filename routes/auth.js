@@ -152,9 +152,6 @@ router.get('/me', requireLogin, (req, res) => {
   res.json(u || {});
 });
 
-
-module.exports = router;
-
 // NOTE: routes below intentionally stay in this file for consistent auth API surface.
 
 // POST /api/auth/change-password
@@ -349,6 +346,14 @@ router.post('/reset-password', [
   db.prepare('UPDATE users SET password_hash=?, updated_at=datetime("now") WHERE id=?').run(hash, row.user_id);
   db.prepare('DELETE FROM password_resets WHERE id=?').run(row.id);
   db.prepare('INSERT INTO audit_log (user_id, action, ip) VALUES (?, "reset_password", ?)').run(row.user_id, req.ip);
+
+  // Invalidate all active sessions for this user
+  const sessions = db.prepare('SELECT session_id FROM user_sessions WHERE user_id=?').all(row.user_id);
+  sessions.forEach(s => {
+    req.sessionStore?.destroy?.(s.session_id, () => {});
+  });
+  db.prepare('DELETE FROM user_sessions WHERE user_id=?').run(row.user_id);
+
   res.json({ ok: true });
 });
 
@@ -406,3 +411,5 @@ router.post('/sessions/logout-all', requireLogin, (req, res) => {
     });
   });
 });
+
+module.exports = router;
