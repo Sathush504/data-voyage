@@ -2,21 +2,22 @@
 
 University Data Science Research Platform for publishing research papers, showcasing analytics dashboards, sharing news, and connecting researchers.
 
-## Highlights
-
-- Research repository with approvals, downloads, and domain filtering
-- Researcher profiles, reputation, badges, and endorsements
-- News and announcements with categories and publishing controls
-- Admin analytics dashboard and platform statistics
-- Secure auth with sessions, CSRF protection, and optional OAuth
-- Email notifications for password resets and account changes (optional)
+- **IEEE-Style Research Repository**: Sidebar-driven search with domain filtering, approval workflows, and premium file explorer.
+- **AI Paper Processing**: Automated summarization, keyword extraction, and metadata enrichment for submitted research.
+- **Researcher Ecosystem**: Detailed profiles, reputation system, automated badges, and peer endorsements.
+- **Modern Academic UI**: High-contrast, accessibility-focused design with professional typography and smooth micro-animations.
+- **Admin Command Center**: Real-time analytics, user moderation, paper review tools, and audit logging.
+- **Secure Architecture**: Session-based auth, CSRF protection, rate limiting, and OAuth2 integration.
+- **Integrated Notifications**: SMTP support for automated paper status updates and account security alerts.
 
 ## Tech Stack
 
-- Node.js + Express
-- SQLite (better-sqlite3)
-- Passport (Google, GitHub, LinkedIn OAuth)
-- HTML/CSS/JS frontend
+- **Backend**: Node.js, Express.js
+- **Database**: SQLite (via `better-sqlite3`)
+- **Authentication**: Passport.js (Local, Google, GitHub, LinkedIn)
+- **Frontend**: Vanilla HTML5, CSS3 (Modern Flex/Grid), JavaScript (ES6+)
+- **Icons**: Iconify Framework
+- **Deployment**: Docker, Docker Compose Ready
 
 ## Getting Started
 

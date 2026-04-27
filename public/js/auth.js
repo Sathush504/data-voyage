@@ -70,6 +70,7 @@ const Auth = {
 
   async logout() {
     await API._fetch('/api/auth/logout', { method: 'POST' });
+    API.clearCsrfToken();
     this.user = null;
     this._updateNav();
     this._updatePages();

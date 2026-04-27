@@ -13,8 +13,11 @@ const API = {
     if (r.ok && j.token) this._csrfToken = j.token;
     return this._csrfToken;
   },
+  clearCsrfToken() {
+    this._csrfToken = null;
+  },
 
-  async _fetch(url, opts = {}) {
+  async _fetch(url, opts = {}, _isRetry = false) {
     const method = (opts.method || 'GET').toUpperCase();
     const headers = { ...(opts.headers || {}) };
     if (!['GET', 'HEAD', 'OPTIONS'].includes(method) && url.startsWith('/api/')) {
@@ -22,8 +25,12 @@ const API = {
       if (t) headers['X-CSRF-Token'] = t;
     }
     const res = await fetch(url, { credentials: 'include', ...opts, headers });
-    // If the server rejects the CSRF token, clear it so we re-fetch on the next request
-    if (res.status === 403) this._csrfToken = null;
+    // If server rejects CSRF (403), clear it. 
+    // If it was the first attempt, try once more with a fresh token.
+    if (res.status === 403 && !_isRetry && !['GET', 'HEAD', 'OPTIONS'].includes(method) && url.startsWith('/api/')) {
+      this._csrfToken = null;
+      return this._fetch(url, opts, true);
+    }
     return res;
   },
 
@@ -35,14 +42,27 @@ const API = {
   async getPapers(opts = {}) {
     const p = new URLSearchParams();
     if (opts.domain && opts.domain !== 'all') p.set('domain', opts.domain);
-    if (opts.q)    p.set('q',    opts.q);
-    if (opts.page) p.set('page', opts.page);
+    if (opts.q)                p.set('q',    opts.q);
+    if (opts.page)             p.set('page', opts.page);
+    if (opts.sort)             p.set('sort', opts.sort);
+    if (opts.year)             p.set('year', opts.year);
+    if (opts.has_file === '1') p.set('has_file', '1');
+    if (opts.min_endorsements && Number(opts.min_endorsements) > 0)
+      p.set('min_endorsements', opts.min_endorsements);
     const r = await this._fetch('/api/research?' + p);
     return r.json();
   },
   async getPaper(uuid) {
     const r = await this._fetch(`/api/research/${uuid}`);
     return r.ok ? r.json() : null;
+  },
+  async getFileContent(uuid, fileId) {
+    const r = await this._fetch(`/api/research/${uuid}/files/${fileId}/content`);
+    return r.ok ? r.json() : { error: 'Could not load content' };
+  },
+  async uploadPaper(formData) {
+    const r = await this._fetch('/api/research', { method: 'POST', body: formData });
+    return r.json();
   },
 
   // ── SETTINGS ────────────────────────────────────────────
@@ -78,6 +98,14 @@ const API = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ newEmail, password })
+    });
+    return r.json();
+  },
+  async changePassword(data) {
+    const r = await this._fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
     return r.json();
   },

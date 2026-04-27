@@ -423,6 +423,52 @@ const charts = (() => {
     });
   }
 
+  // ── ADMIN CHARTS ───────────────────────────────────────────
+  function drawAdminTrends(trends) {
+    const c = getCtx('admin-chart-trends');
+    if (!c) return;
+    const { ctx, W, H } = c;
+    const data = (trends && trends.length) ? trends : [12, 19, 3, 5, 2, 3, 15, 20, 25, 30, 28, 35];
+    const max = Math.max(10, ...data) * 1.2;
+    const pad = 30;
+
+    animate(1000, p => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.beginPath();
+      data.forEach((v, i) => {
+        const x = pad + i * (W - pad * 2) / (data.length - 1);
+        const y = H - pad - (v / max) * (H - pad * 2) * p;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = '#0901FA'; ctx.lineWidth = 3; ctx.stroke();
+    });
+  }
+
+  function drawAdminDomains(domains) {
+    const c = getCtx('admin-chart-domains');
+    if (!c) return;
+    const { ctx, W, H } = c;
+    const data = (domains && domains.length) ? domains : [
+      { label: 'ML', value: 40, color: '#0901FA' },
+      { label: 'Stats', value: 30, color: '#00d4ff' },
+      { label: 'NLP', value: 20, color: '#3d35fb' },
+      { label: 'Bio', value: 10, color: '#ca8a04' }
+    ];
+    const total = data.reduce((a, b) => a + (Number(b.value) || 0), 0);
+    const cx = W / 2, cy = H / 2, r = Math.min(W, H) / 2 - 20;
+
+    animate(1000, p => {
+      ctx.clearRect(0, 0, W, H);
+      let start = -Math.PI / 2;
+      data.forEach(d => {
+        const sweep = (Number(d.value) / total) * Math.PI * 2 * p;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, start, start + sweep);
+        ctx.fillStyle = d.color; ctx.fill();
+        start += sweep;
+      });
+    });
+  }
+
   // ── HOME MINI CHARTS ────────────────────────────────────────
   function initHome() {
     initNetwork();
@@ -446,6 +492,6 @@ const charts = (() => {
   }
 
   // Public API
-  return { initHome, initDash };
+  return { initHome, initDash, drawAdminTrends, drawAdminDomains };
 
 })();

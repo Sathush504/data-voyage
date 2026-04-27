@@ -1,712 +1,1244 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data Voyage — University Research Platform</title>
-  <link rel="icon" href="/images/favicon.png" type="image/png"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/base.css"/>
-  <link rel="stylesheet" href="css/animations.css"/>
-  <link rel="stylesheet" href="css/components.css"/>
-  <link rel="stylesheet" href="css/auth.css"/>
+  <link rel="icon" href="/images/favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/auth.css" />
   <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </head>
+
 <body>
 
-<!-- ══════════════════════════════════════════
+  <!-- ══════════════════════════════════════════
      NAV
 ══════════════════════════════════════════ -->
-<nav>
-  <div class="nav-logo" data-go="home" role="button" tabindex="0">
-    <img src="/images/data_voyage_logo.png" alt="Data Voyage Logo" style="height:32px; width:auto; border-radius:4px; margin-right:8px;"/>Data Voyage
-  </div>
-  <ul class="nav-links">
-    <li><a data-page="home" class="active">Home</a></li>
-    <li class="nav-has-dropdown">
-      <a data-page="repo">Research</a>
-      <div class="nav-dropdown">
-        <div class="nav-dropdown-section">
-          <div class="nav-dropdown-title">By domain</div>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Machine Learning">Machine Learning</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Statistics">Statistics</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="NLP">Natural Language Processing</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Computer Vision">Computer Vision</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Graph ML">Graph ML</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Bioinformatics">Bioinformatics</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Robotics">Robotics</button>
-          <button class="nav-dd-link" data-go="repo" data-repo-domain="Time Series">Time Series</button>
-        </div>
-        <div class="nav-dropdown-section">
-          <div class="nav-dropdown-title">Quick actions</div>
-          <button class="nav-dd-link" data-go="repo" data-repo-latest="1">Latest papers</button>
-          <button class="nav-dd-link" data-go="upload">Submit a paper</button>
-        </div>
-      </div>
-    </li>
-    <li><a data-page="dashboards">Dashboards</a></li>
-    <li class="nav-has-dropdown">
-      <a data-page="news">News</a>
-      <div class="nav-dropdown">
-        <div class="nav-dropdown-section">
-          <div class="nav-dropdown-title">Categories</div>
-          <button class="nav-dd-link" data-go="news" data-news-category="Announcement">Announcements</button>
-          <button class="nav-dd-link" data-go="news" data-news-category="Award">Awards</button>
-          <button class="nav-dd-link" data-go="news" data-news-category="Conference">Conferences</button>
-          <button class="nav-dd-link" data-go="news" data-news-category="Research">Research Highlights</button>
-          <button class="nav-dd-link" data-go="news" data-news-category="Collaboration">Collaborations</button>
-          <button class="nav-dd-link" data-go="news" data-news-category="Funding">Funding Calls</button>
-          <button class="nav-dd-link" data-go="news" data-news-category="Education">Education</button>
-        </div>
-        <div class="nav-dropdown-section">
-          <div class="nav-dropdown-title">Shortcuts</div>
-          <button class="nav-dd-link" data-go="news" data-news-latest="1">Latest articles</button>
-        </div>
-      </div>
-    </li>
-    <li><a data-page="profiles">Researchers</a></li>
-    <li><a data-page="leaderboard">Leaderboard</a></li>
-    <li><a data-page="contact">Contact</a></li>
-    <li><a data-page="upload" style="display:none">Upload</a></li>
-    <li><a data-page="admin" id="nav-admin-link" style="display:none" class="nav-cta">Admin ↗</a></li>
-  </ul>
-  <div id="nav-login-btn" style="display:flex;align-items:center;gap:8px">
-    <button class="btn-ghost btn-sm" data-open-modal="modal-login">Sign In</button>
-    <button class="btn-primary btn-sm" data-open-modal="modal-register">Join →</button>
-  </div>
-  <div id="nav-user-menu" style="display:none;align-items:center;gap:10px">
-    <div class="nav-user-pill" id="nav-user-trigger" data-toggle-user-dropdown role="button" tabindex="0">
-      <div class="nav-avatar" id="nav-avatar-wrap">
-        <img id="nav-avatar-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%"/>
-      </div>
-      <span id="nav-user-name">User</span>
-      <span class="nav-user-caret"><span class="iconify" data-icon="mdi:menu-down"></span></span>
+  <nav>
+    <div class="nav-logo" data-go="home" role="button" tabindex="0">
+      <img src="/images/data_voyage_logo.png" alt="Data Voyage Logo"
+        style="height:32px; width:auto; border-radius:4px; margin-right:8px;" />Data Voyage
     </div>
-    <div class="nav-user-dropdown" id="nav-user-dropdown" style="display:none" role="menu" aria-label="Account menu">
-      <button class="nav-dd-item" role="menuitem" data-close-user-dropdown data-go="myprofile">
-        <span class="iconify" data-icon="mdi:account-outline"></span> View profile
-      </button>
-      <button class="nav-dd-item" role="menuitem" data-close-user-dropdown data-go="settings">
-        <span class="iconify" data-icon="mdi:cog-outline"></span> Settings
-      </button>
-      <div class="nav-dd-sep"></div>
-      <button class="nav-dd-item danger" role="menuitem" data-close-user-dropdown data-logout>
-        <span class="iconify" data-icon="mdi:logout"></span> Logout
-      </button>
+    <ul class="nav-links">
+      <li><a data-page="home" class="active">Home</a></li>
+      <li class="nav-has-dropdown">
+        <a data-page="repo">Research</a>
+        <div class="nav-dropdown">
+          <div class="nav-dropdown-section">
+            <div class="nav-dropdown-title">By domain</div>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Machine Learning">Machine Learning</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Statistics">Statistics</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="NLP">Natural Language Processing</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Computer Vision">Computer Vision</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Graph ML">Graph ML</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Bioinformatics">Bioinformatics</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Robotics">Robotics</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Time Series">Time Series</button>
+          </div>
+          <div class="nav-dropdown-section">
+            <div class="nav-dropdown-title">Quick actions</div>
+            <button class="nav-dd-link" data-go="repo" data-repo-latest="1">Latest papers</button>
+            <button class="nav-dd-link" data-go="upload">Submit a paper</button>
+          </div>
+        </div>
+      </li>
+      <li><a data-page="dashboards">Dashboards</a></li>
+      <li class="nav-has-dropdown">
+        <a data-page="news">News</a>
+        <div class="nav-dropdown">
+          <div class="nav-dropdown-section">
+            <div class="nav-dropdown-title">Categories</div>
+            <button class="nav-dd-link" data-go="news" data-news-category="Announcement">Announcements</button>
+            <button class="nav-dd-link" data-go="news" data-news-category="Award">Awards</button>
+            <button class="nav-dd-link" data-go="news" data-news-category="Conference">Conferences</button>
+            <button class="nav-dd-link" data-go="news" data-news-category="Research">Research Highlights</button>
+            <button class="nav-dd-link" data-go="news" data-news-category="Collaboration">Collaborations</button>
+            <button class="nav-dd-link" data-go="news" data-news-category="Funding">Funding Calls</button>
+            <button class="nav-dd-link" data-go="news" data-news-category="Education">Education</button>
+          </div>
+          <div class="nav-dropdown-section">
+            <div class="nav-dropdown-title">Shortcuts</div>
+            <button class="nav-dd-link" data-go="news" data-news-latest="1">Latest articles</button>
+          </div>
+        </div>
+      </li>
+      <li><a data-page="profiles">Researchers</a></li>
+      <li><a data-page="leaderboard">Leaderboard</a></li>
+      <li><a data-page="contact">Contact</a></li>
+      <li><a data-page="upload" style="display:none">Upload</a></li>
+      <li><a data-page="admin" id="nav-admin-link" style="display:none" class="nav-cta">Admin ↗</a></li>
+    </ul>
+    <div id="nav-login-btn" style="display:flex;align-items:center;gap:8px">
+      <button class="btn-ghost btn-sm" data-open-modal="modal-login">Sign In</button>
+      <button class="btn-primary btn-sm" data-open-modal="modal-register">Join →</button>
     </div>
-  </div>
-  <div class="nav-mobile-toggle"><span></span><span></span><span></span></div>
-</nav>
+    <div id="nav-user-menu" style="display:none;align-items:center;gap:10px">
+      <div class="nav-user-pill" id="nav-user-trigger" data-toggle-user-dropdown role="button" tabindex="0">
+        <div class="nav-avatar" id="nav-avatar-wrap">
+          <img id="nav-avatar-img" src="" alt=""
+            style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%" />
+        </div>
+        <span id="nav-user-name">User</span>
+        <span class="nav-user-caret"><span class="iconify" data-icon="mdi:menu-down"></span></span>
+      </div>
+      <div class="nav-user-dropdown" id="nav-user-dropdown" style="display:none" role="menu" aria-label="Account menu">
+        <button class="nav-dd-item" role="menuitem" data-close-user-dropdown data-go="myprofile">
+          <span class="iconify" data-icon="mdi:account-outline"></span> View profile
+        </button>
+        <button class="nav-dd-item" role="menuitem" data-close-user-dropdown data-go="settings">
+          <span class="iconify" data-icon="mdi:cog-outline"></span> Settings
+        </button>
+        <div class="nav-dd-sep"></div>
+        <button class="nav-dd-item danger" role="menuitem" data-close-user-dropdown data-logout>
+          <span class="iconify" data-icon="mdi:logout"></span> Logout
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-toggle"><span></span><span></span><span></span></div>
+  </nav>
 
-<!-- ══════════════════════════════════════════
+  <!-- ══════════════════════════════════════════
      HOME
 ══════════════════════════════════════════ -->
-<div id="page-home" class="page">
-  <section class="hero">
-    <div class="hero-bg"></div><div class="hero-grid"></div>
-    <div class="hero-content">
-      <div class="hero-badge">Sir John Kotelawala Defence University Research Platform</div>
-      <h1>Navigate the<span class="shimmer-text">Ocean of Data</span> Science</h1>
-      <p>Data Voyage is the central research hub for the <br><span class="shimmer-text">Sir John Kotelawala Defence University</span> Applied Data Science Communication Degree Program</span> — explore publications, interactive dashboards, datasets, and connect with leading researchers.</p>
-      <div class="hero-actions">
-        <button class="btn-primary" data-go="repo" style="gap:8px"><span class="iconify" data-icon="mdi:hexagon"></span> Explore Research</button>
-        <button class="btn-ghost" data-go="dashboards">▸ View Dashboards</button>
+  <div id="page-home" class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-content">
+        <div class="hero-badge">Sir John Kotelawala Defence University Research Platform</div>
+        <h1>Navigate the<span class="shimmer-text">Ocean of Data</span> Science</h1>
+        <p>Data Voyage is the central research hub for the <br><span class="shimmer-text">Sir John Kotelawala Defence
+            University</span> Applied Data Science Communication Degree Program</span> — explore publications,
+          interactive dashboards, datasets, and connect with leading researchers.</p>
+        <div class="hero-actions">
+          <button class="btn-primary" data-go="repo" style="gap:8px"><span class="iconify"
+              data-icon="mdi:hexagon"></span> Explore Research</button>
+          <button class="btn-ghost" data-go="dashboards">▸ View Dashboards</button>
+        </div>
+        <div class="hero-search">
+          <span class="hero-search-icon">⌕</span>
+          <input id="hero-search-input" type="text" placeholder="Search papers, datasets, researchers…" />
+          <button class="hero-search-btn" data-hero-search>Search</button>
+        </div>
       </div>
-      <div class="hero-search">
-        <span class="hero-search-icon">⌕</span>
-        <input id="hero-search-input" type="text" placeholder="Search papers, datasets, researchers…"/>
-        <button class="hero-search-btn" data-hero-search>Search</button>
+      <div class="hero-canvas-wrap"><canvas id="networkCanvas" width="580" height="580"></canvas></div>
+    </section>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-number" id="stat-papers">—</div>
+        <div class="stat-label">Research Papers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-researchers">—</div>
+        <div class="stat-label">Researchers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-views">—</div>
+        <div class="stat-label">Total Views</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-domains">—</div>
+        <div class="stat-label">Domains</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="stat-badges">—</div>
+        <div class="stat-label">Badges Earned</div>
       </div>
     </div>
-    <div class="hero-canvas-wrap"><canvas id="networkCanvas" width="580" height="580"></canvas></div>
-  </section>
 
-  <div class="stats-bar">
-    <div class="stat-item"><div class="stat-number" id="stat-papers">—</div><div class="stat-label">Research Papers</div></div>
-    <div class="stat-item"><div class="stat-number" id="stat-researchers">—</div><div class="stat-label">Researchers</div></div>
-    <div class="stat-item"><div class="stat-number" id="stat-views">—</div><div class="stat-label">Total Views</div></div>
-    <div class="stat-item"><div class="stat-number" id="stat-domains">—</div><div class="stat-label">Domains</div></div>
-    <div class="stat-item"><div class="stat-number" id="stat-badges">—</div><div class="stat-label">Badges Earned</div></div>
+    <section class="section section-alt">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label">// Featured Research</div>
+          <div class="section-title">Latest Publications</div>
+          <div class="section-subtitle">Groundbreaking work from our research community</div>
+        </div>
+        <span class="view-all" data-go="repo">View all →</span>
+      </div>
+      <div class="cards-grid" id="featured-research-grid">
+        <div class="skeleton-card">
+          <div class="skeleton-header"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line md"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line sm"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-header"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line md"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line sm"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-header"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line md"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line sm"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label" style="color:var(--accent)">// Interactive Dashboards</div>
+          <div class="section-title section-title-light">Explore Research Visually</div>
+        </div>
+        <span class="view-all" data-go="dashboards" style="color:var(--accent)">View all →</span>
+      </div>
+      <div class="viz-grid">
+        <div class="viz-card reveal delay-1">
+          <div class="viz-preview"><canvas id="homeBarChart" width="320" height="180"></canvas></div>
+          <div class="viz-info">
+            <div class="viz-title">Publication Volume by Domain</div>
+            <div class="viz-desc">Annual research output across all disciplines</div>
+            <div class="viz-badge"><span class="iconify" data-icon="mdi:chart-bar"></span> Bar Chart · Live</div>
+          </div>
+        </div>
+        <div class="viz-card reveal delay-2">
+          <div class="viz-preview"><canvas id="homeLineChart" width="320" height="180"></canvas></div>
+          <div class="viz-info">
+            <div class="viz-title">Citation Impact Over Time</div>
+            <div class="viz-desc">5-year H-index and citation trend analysis</div>
+            <div class="viz-badge"><span class="iconify" data-icon="mdi:chart-line"></span> Time Series · Live</div>
+          </div>
+        </div>
+        <div class="viz-card reveal delay-3">
+          <div class="viz-preview"><canvas id="homeScatterChart" width="320" height="180"></canvas></div>
+          <div class="viz-info">
+            <div class="viz-title">Collaboration Network</div>
+            <div class="viz-desc">Cross-departmental research collaborations</div>
+            <div class="viz-badge"><span class="iconify" data-icon="mdi:graph-outline"></span> Network · Live</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="section-header reveal">
+        <div>
+          <div class="section-label">// Latest News</div>
+          <div class="section-title">News & Announcements</div>
+        </div>
+        <span class="view-all" data-go="news">View all →</span>
+      </div>
+      <div class="news-grid" id="home-news-grid">
+        <div class="skeleton-card">
+          <div class="skeleton-header"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line sm"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line md"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-header"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line sm"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line md"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-header"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line sm"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line md"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo"><img src="/images/data_voyage_logo.png" alt="Logo"
+              style="height:24px; width:auto; margin-right:8px; vertical-align:middle; border-radius:4px;" /> Data
+            Voyage</div>
+          <p class="footer-tagline">The University Research Platform for Data Science — connecting researchers,
+            datasets, and discoveries.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <ul class="footer-links">
+            <li><a data-go="repo">Research Repository</a></li>
+            <li><a data-go="dashboards">Dashboards</a></li>
+            <li><a data-go="upload">Upload Research</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Community</div>
+          <ul class="footer-links">
+            <li><a data-go="profiles">Researchers</a></li>
+            <li><a data-go="leaderboard">Leaderboard</a></li>
+            <li><a data-go="news">News & Events</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Account</div>
+          <ul class="footer-links">
+            <li><a data-open-modal="modal-login">Sign In</a></li>
+            <li><a data-open-modal="modal-register">Create Account</a></li>
+            <li><a data-go="contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2025 Data Voyage · University Data Science Program</div>
+        <div class="footer-copy" style="display:flex;align-items:center;gap:8px">Built with research in mind <span
+            class="iconify" data-icon="mdi:hexagon"></span></div>
+      </div>
+    </footer>
   </div>
 
-  <section class="section section-alt">
-    <div class="section-header reveal">
-      <div><div class="section-label">// Featured Research</div><div class="section-title">Latest Publications</div><div class="section-subtitle">Groundbreaking work from our research community</div></div>
-      <span class="view-all" data-go="repo">View all →</span>
-    </div>
-    <div class="cards-grid" id="featured-research-grid">
-      <div class="skeleton-card">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line md"></div>
-          <div class="skeleton-line lg"></div>
-          <div class="skeleton-line sm"></div>
-        </div>
-      </div>
-      <div class="skeleton-card">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line md"></div>
-          <div class="skeleton-line lg"></div>
-          <div class="skeleton-line sm"></div>
-        </div>
-      </div>
-      <div class="skeleton-card">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line md"></div>
-          <div class="skeleton-line lg"></div>
-          <div class="skeleton-line sm"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark">
-    <div class="section-header reveal">
-      <div><div class="section-label" style="color:var(--accent)">// Interactive Dashboards</div><div class="section-title section-title-light">Explore Research Visually</div></div>
-      <span class="view-all" data-go="dashboards" style="color:var(--accent)">View all →</span>
-    </div>
-    <div class="viz-grid">
-      <div class="viz-card reveal delay-1"><div class="viz-preview"><canvas id="homeBarChart" width="320" height="180"></canvas></div><div class="viz-info"><div class="viz-title">Publication Volume by Domain</div><div class="viz-desc">Annual research output across all disciplines</div><div class="viz-badge"><span class="iconify" data-icon="mdi:chart-bar"></span> Bar Chart · Live</div></div></div>
-      <div class="viz-card reveal delay-2"><div class="viz-preview"><canvas id="homeLineChart" width="320" height="180"></canvas></div><div class="viz-info"><div class="viz-title">Citation Impact Over Time</div><div class="viz-desc">5-year H-index and citation trend analysis</div><div class="viz-badge"><span class="iconify" data-icon="mdi:chart-line"></span> Time Series · Live</div></div></div>
-      <div class="viz-card reveal delay-3"><div class="viz-preview"><canvas id="homeScatterChart" width="320" height="180"></canvas></div><div class="viz-info"><div class="viz-title">Collaboration Network</div><div class="viz-desc">Cross-departmental research collaborations</div><div class="viz-badge"><span class="iconify" data-icon="mdi:graph-outline"></span> Network · Live</div></div></div>
-    </div>
-  </section>
-
-  <section class="section section-alt">
-    <div class="section-header reveal">
-      <div><div class="section-label">// Latest News</div><div class="section-title">News & Announcements</div></div>
-      <span class="view-all" data-go="news">View all →</span>
-    </div>
-    <div class="news-grid" id="home-news-grid">
-      <div class="skeleton-card">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line sm"></div>
-          <div class="skeleton-line lg"></div>
-          <div class="skeleton-line md"></div>
-        </div>
-      </div>
-      <div class="skeleton-card">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line sm"></div>
-          <div class="skeleton-line lg"></div>
-          <div class="skeleton-line md"></div>
-        </div>
-      </div>
-      <div class="skeleton-card">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line sm"></div>
-          <div class="skeleton-line lg"></div>
-          <div class="skeleton-line md"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="footer-grid">
-      <div><div class="footer-logo"><img src="/images/data_voyage_logo.png" alt="Logo" style="height:24px; width:auto; margin-right:8px; vertical-align:middle; border-radius:4px;"/> Data Voyage</div><p class="footer-tagline">The University Research Platform for Data Science — connecting researchers, datasets, and discoveries.</p></div>
-      <div><div class="footer-col-title">Platform</div><ul class="footer-links"><li><a data-go="repo">Research Repository</a></li><li><a data-go="dashboards">Dashboards</a></li><li><a data-go="upload">Upload Research</a></li></ul></div>
-      <div><div class="footer-col-title">Community</div><ul class="footer-links"><li><a data-go="profiles">Researchers</a></li><li><a data-go="leaderboard">Leaderboard</a></li><li><a data-go="news">News & Events</a></li></ul></div>
-      <div><div class="footer-col-title">Account</div><ul class="footer-links"><li><a data-open-modal="modal-login">Sign In</a></li><li><a data-open-modal="modal-register">Create Account</a></li><li><a data-go="contact">Contact</a></li></ul></div>
-    </div>
-    <div class="footer-bottom"><div class="footer-copy">© 2025 Data Voyage · University Data Science Program</div><div class="footer-copy" style="display:flex;align-items:center;gap:8px">Built with research in mind <span class="iconify" data-icon="mdi:hexagon"></span></div></div>
-  </footer>
-</div>
-
-<!-- ══════════════════════════════════════════
+  <!-- ══════════════════════════════════════════
      RESEARCH REPO
 ══════════════════════════════════════════ -->
-<div id="page-repo" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Research Repository</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Explore Publications</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Peer-reviewed papers, datasets, and research findings across all data science disciplines.</p>
-  </div>
-  <div class="repo-filters">
-    <span class="filter-label">Filter:</span>
-    <div class="filter-chips" id="repo-filter-chips">
-      <span class="filter-chip active" data-domain="all">All</span>
-      <span class="filter-chip" data-domain="Machine Learning">ML</span>
-      <span class="filter-chip" data-domain="Statistics">Statistics</span>
-      <span class="filter-chip" data-domain="NLP">NLP</span>
-      <span class="filter-chip" data-domain="Computer Vision">CV</span>
-      <span class="filter-chip" data-domain="Graph ML">Graph ML</span>
-      <span class="filter-chip" data-domain="Bioinformatics">Bioinformatics</span>
-      <span class="filter-chip" data-domain="Robotics">Robotics</span>
-      <span class="filter-chip" data-domain="Time Series">Time Series</span>
+  <div id="page-repo" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Research Repository</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Explore Publications</div>
+      <p class="reveal delay-2"
+        style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">
+        Peer-reviewed papers, datasets, and research findings across all data science disciplines.</p>
     </div>
-    <input class="filter-search" id="repo-search" type="text" placeholder="Search papers…"/>
-  </div>
-  <div class="repo-grid" id="repo-grid"><div class="loading-placeholder" style="grid-column:1/-1">Loading…</div></div>
-  <div id="repo-pagination" style="display:flex;gap:8px;justify-content:center;padding:0 48px 48px"></div>
-</div>
 
-<!-- ══════════════════════════════════════════
+    <!-- ── SIDEBAR + CONTENT LAYOUT ──────────────────── -->
+    <div class="repo-layout">
+
+      <!-- ══ LEFT SIDEBAR: Filters & Sort ══ -->
+      <aside class="repo-sidebar">
+
+        <!-- Active filters summary -->
+        <div class="sidebar-filter-header">
+          <span class="sidebar-filter-title">
+            <span class="iconify" data-icon="mdi:tune-variant"></span>
+            Filters
+          </span>
+          <button class="sidebar-reset-btn" onclick="resetRepoFilters()" id="sidebar-reset-btn" style="display:none">
+            Reset
+          </button>
+        </div>
+
+        <!-- Domain -->
+        <div class="fp-section">
+          <div class="fp-section-title">Domain</div>
+          <div class="fp-chips fp-chips-col" id="repo-filter-chips">
+            <span class="filter-chip active" data-domain="all">
+              <span class="iconify" data-icon="mdi:layers-outline"></span>All Domains
+            </span>
+            <span class="filter-chip" data-domain="Machine Learning">
+              <span class="iconify" data-icon="mdi:brain"></span>Machine Learning
+            </span>
+            <span class="filter-chip" data-domain="Statistics">
+              <span class="iconify" data-icon="mdi:chart-bar"></span>Statistics
+            </span>
+            <span class="filter-chip" data-domain="NLP">
+              <span class="iconify" data-icon="mdi:text-recognition"></span>NLP
+            </span>
+            <span class="filter-chip" data-domain="Computer Vision">
+              <span class="iconify" data-icon="mdi:eye-outline"></span>Computer Vision
+            </span>
+            <span class="filter-chip" data-domain="Graph ML">
+              <span class="iconify" data-icon="mdi:graph-outline"></span>Graph ML
+            </span>
+            <span class="filter-chip" data-domain="Bioinformatics">
+              <span class="iconify" data-icon="mdi:dna"></span>Bioinformatics
+            </span>
+            <span class="filter-chip" data-domain="Robotics">
+              <span class="iconify" data-icon="mdi:robot-outline"></span>Robotics
+            </span>
+            <span class="filter-chip" data-domain="Time Series">
+              <span class="iconify" data-icon="mdi:chart-timeline-variant"></span>Time Series
+            </span>
+          </div>
+        </div>
+
+        <div class="fp-divider"></div>
+
+        <!-- Sort By -->
+        <div class="fp-section">
+          <div class="fp-section-title">Sort By</div>
+          <div class="fp-sort-col">
+            <button class="sort-btn-row active" data-sort="newest">
+              <span class="iconify" data-icon="mdi:clock-outline"></span>Newest First
+            </button>
+            <button class="sort-btn-row" data-sort="oldest">
+              <span class="iconify" data-icon="mdi:history"></span>Oldest First
+            </button>
+            <button class="sort-btn-row" data-sort="most_viewed">
+              <span class="iconify" data-icon="mdi:eye-outline"></span>Most Viewed
+            </button>
+            <button class="sort-btn-row" data-sort="most_downloaded">
+              <span class="iconify" data-icon="mdi:download-outline"></span>Most Downloaded
+            </button>
+            <button class="sort-btn-row" data-sort="most_endorsed">
+              <span class="iconify" data-icon="mdi:handshake-outline"></span>Most Endorsed
+            </button>
+          </div>
+        </div>
+
+        <div class="fp-divider"></div>
+
+        <!-- Publication Year -->
+        <div class="fp-section">
+          <div class="fp-section-title">
+            <span class="iconify" data-icon="mdi:calendar-range"></span> Publication Year
+          </div>
+          <select class="fp-select" id="filter-year">
+            <option value="">Any year</option>
+          </select>
+        </div>
+
+        <div class="fp-divider"></div>
+
+        <!-- Min Endorsements -->
+        <div class="fp-section">
+          <div class="fp-section-title">
+            <span class="iconify" data-icon="mdi:star-outline"></span>
+            Min. Endorsements: <span id="filter-endorsements-val"
+              style="color:var(--primary);font-weight:800">Any</span>
+          </div>
+          <div class="fp-range-wrap">
+            <input type="range" class="fp-range" id="filter-endorsements" min="0" max="20" step="1" value="0" />
+          </div>
+        </div>
+
+        <div class="fp-divider"></div>
+
+        <!-- Has File Toggle -->
+        <div class="fp-section">
+          <label class="fp-toggle-label" for="filter-has-file">
+            <span class="iconify" data-icon="mdi:file-pdf-box"></span>Has attached file
+            <div class="fp-toggle-wrap">
+              <input type="checkbox" class="fp-toggle-input" id="filter-has-file" />
+              <span class="fp-toggle"></span>
+            </div>
+          </label>
+        </div>
+
+      </aside>
+
+      <!-- ══ RIGHT CONTENT: Search + Grid ══ -->
+      <div class="repo-content">
+
+        <!-- Search + results count -->
+        <div class="repo-search-bar">
+          <div class="search-wrap" style="flex:1">
+            <span class="search-icon"><span class="iconify" data-icon="mdi:magnify"></span></span>
+            <input class="filter-search" id="repo-search" type="text" placeholder="Search by title, keyword, author…" />
+            <button class="search-clear" onclick="clearRepoSearch()" id="repo-search-clear"
+              style="display:none">✕</button>
+          </div>
+          <div class="repo-results-count" id="repo-results-count"></div>
+        </div>
+
+        <!-- Paper grid -->
+        <div class="repo-grid" id="repo-grid">
+          <div class="loading-placeholder" style="grid-column:1/-1">Loading…</div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="repo-pagination" style="display:flex;gap:8px;justify-content:center;padding:0 0 48px"></div>
+
+      </div><!-- /.repo-content -->
+
+    </div><!-- /.repo-layout -->
+  </div>
+
+
+
+
+  <!-- ══════════════════════════════════════════
      CONTACT
 ══════════════════════════════════════════ -->
-<div id="page-contact" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Contact</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Contact Us</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:640px;line-height:1.65">
-      Questions, partnerships, or support requests — send a message and the team will respond.
-    </p>
-  </div>
-  <div style="padding:32px 48px 60px;max-width:980px;margin:0 auto">
-    <div class="form-card reveal" style="max-width:680px;margin:0 auto">
-      <div class="form-card-title"><div class="icon"><span class="iconify" data-icon="mdi:email-outline"></span></div>Send a Message</div>
-      <form id="contact-form">
-        <div class="form-row" style="margin-bottom:16px">
-          <div class="form-group"><label class="form-label" for="cname">Name</label><input class="form-input" id="cname" name="cname" type="text" placeholder="Your name"/></div>
-          <div class="form-group"><label class="form-label" for="cemail">Email</label><input class="form-input" id="cemail" name="cemail" type="email" placeholder="you@email.com"/></div>
+  <div id="page-contact" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Contact</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Contact Us</div>
+      <p class="reveal delay-2"
+        style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:640px;line-height:1.65">
+        Questions, partnerships, or support requests — send a message and the team will respond.
+      </p>
+    </div>
+    <div style="padding:32px 48px 60px;max-width:980px;margin:0 auto">
+      <div class="form-card reveal" style="max-width:680px;margin:0 auto">
+        <div class="form-card-title">
+          <div class="icon"><span class="iconify" data-icon="mdi:email-outline"></span></div>Send a Message
         </div>
-        <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="csubject">Subject</label><input class="form-input" id="csubject" name="csubject" type="text" placeholder="How can we help?"/></div>
-        <div class="form-group" style="margin-bottom:22px"><label class="form-label" for="cmessage">Message *</label><textarea class="form-textarea" id="cmessage" name="cmessage" style="min-height:140px" placeholder="Write your message…" required></textarea></div>
-        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Send Message →</button>
+        <form id="contact-form">
+          <div class="form-row" style="margin-bottom:16px">
+            <div class="form-group"><label class="form-label" for="cname">Name</label><input class="form-input"
+                id="cname" name="cname" type="text" placeholder="Your name" /></div>
+            <div class="form-group"><label class="form-label" for="cemail">Email</label><input class="form-input"
+                id="cemail" name="cemail" type="email" placeholder="you@email.com" /></div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px"><label class="form-label"
+              for="csubject">Subject</label><input class="form-input" id="csubject" name="csubject" type="text"
+              placeholder="How can we help?" /></div>
+          <div class="form-group" style="margin-bottom:22px"><label class="form-label" for="cmessage">Message
+              *</label><textarea class="form-textarea" id="cmessage" name="cmessage" style="min-height:140px"
+              placeholder="Write your message…" required></textarea></div>
+          <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     DASHBOARDS
+══════════════════════════════════════════ -->
+  <div id="page-dashboards" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Dashboards</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Research Dashboards</div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-card large reveal">
+        <div class="dash-chart-area"><canvas id="dashBigChart" width="900" height="300"></canvas></div>
+        <div class="dash-info">
+          <div class="dash-title">Research Publication Volume — 12-Month Trend</div>
+          <div class="dash-desc">Monthly publication output across all domains.</div>
+          <div class="dash-stats">
+            <div class="dash-stat">
+              <div class="dash-stat-val" id="dash-total-papers">—</div>
+              <div class="dash-stat-lbl">Total papers</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-val" id="dash-total-researchers">—</div>
+              <div class="dash-stat-lbl">Researchers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dash-card reveal delay-1">
+        <div class="dash-chart-area"><canvas id="dashPie" width="400" height="240"></canvas></div>
+        <div class="dash-info">
+          <div class="dash-title">Research Domain Distribution</div>
+          <div class="dash-desc">Breakdown of publications by domain for the current academic year.</div>
+          <div class="dash-stats">
+            <div class="dash-stat">
+              <div class="dash-stat-val" id="dash-domains">—</div>
+              <div class="dash-stat-lbl">Domains active</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-val" id="dash-endorsed">—</div>
+              <div class="dash-stat-lbl">Endorsements</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dash-card reveal delay-2">
+        <div class="dash-chart-area"><canvas id="dashRadar" width="400" height="240"></canvas></div>
+        <div class="dash-info">
+          <div class="dash-title">Community Engagement</div>
+          <div class="dash-desc">Views, endorsements, badges earned, and active researcher contributions.</div>
+          <div class="dash-stats">
+            <div class="dash-stat">
+              <div class="dash-stat-val" id="dash-views">—</div>
+              <div class="dash-stat-lbl">Total views</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-val" id="dash-badges">—</div>
+              <div class="dash-stat-lbl">Badges awarded</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     NEWS
+══════════════════════════════════════════ -->
+  <div id="page-news" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// News & Updates</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Latest from Data Voyage
+      </div>
+    </div>
+    <div id="news-featured-area" style="padding:48px 48px 0">
+      <div class="loading-placeholder">Loading…</div>
+    </div>
+    <div id="news-filters-bar" style="padding:12px 48px 0"></div>
+    <div id="news-page-list" class="news-page-list"></div>
+    <div id="news-pagination" style="display:flex;gap:8px;justify-content:center;padding:0 48px 48px"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     RESEARCHERS DIRECTORY
+══════════════════════════════════════════ -->
+  <div id="page-profiles" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Researchers</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Our Research Community</div>
+      <p class="reveal delay-2"
+        style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Meet the
+        people driving data science forward. Click any card to view their full profile.</p>
+    </div>
+    <div class="repo-filters" style="position:sticky;top:var(--nav-h)">
+      <span class="filter-label">Search:</span>
+      <input class="filter-search" id="profiles-search" type="text" placeholder="Search by name…" />
+      <span class="filter-label" style="margin-left:0">Department:</span>
+      <select class="form-select" id="profiles-dept" style="width:220px">
+        <option value="all">All</option>
+        <option value="Data Science">Data Science</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="Statistics">Statistics</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Mathematics">Mathematics</option>
+      </select>
+      <span class="filter-label" style="margin-left:0">Domain:</span>
+      <select class="form-select" id="profiles-domain" style="width:220px">
+        <option value="all">All</option>
+        <option value="Machine Learning">Machine Learning</option>
+        <option value="Statistics">Statistics</option>
+        <option value="NLP">NLP</option>
+        <option value="Computer Vision">Computer Vision</option>
+        <option value="Graph ML">Graph ML</option>
+        <option value="Bioinformatics">Bioinformatics</option>
+        <option value="Robotics">Robotics</option>
+        <option value="Time Series">Time Series</option>
+      </select>
+    </div>
+    <div class="profiles-grid" id="profiles-grid">
+      <div class="loading-placeholder" style="grid-column:1/-1">Loading…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     SINGLE RESEARCHER PROFILE
+══════════════════════════════════════════ -->
+  <div id="page-viewprofile" class="page">
+    <!-- Dynamically populated by JS -->
+    <div id="viewprofile-content">
+      <div class="loading-placeholder" style="padding:80px">Loading profile…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     MY PROFILE (own profile edit)
+══════════════════════════════════════════ -->
+  <div id="page-myprofile" class="page">
+    <div id="myprofile-content">
+      <div class="loading-placeholder" style="padding:80px">Loading…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     SETTINGS
+══════════════════════════════════════════ -->
+  <div id="page-settings" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Settings</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Account Settings</div>
+      <p class="reveal delay-2"
+        style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:640px;line-height:1.65">
+        Manage your profile, security, notifications, and privacy preferences.
+      </p>
+    </div>
+    <div id="settings-content" style="padding:32px 48px 60px;max-width:1100px;margin:0 auto">
+      <div class="loading-placeholder">Loading settings…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     RESET PASSWORD
+══════════════════════════════════════════ -->
+  <div id="page-resetpassword" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Account</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Reset Password</div>
+      <p class="reveal delay-2"
+        style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:640px;line-height:1.65">
+        Choose a new password for your account.
+      </p>
+    </div>
+    <div style="padding:32px 48px 60px;max-width:980px;margin:0 auto">
+      <div class="form-card reveal" style="max-width:680px;margin:0 auto">
+        <div class="form-card-title">
+          <div class="icon"><span class="iconify" data-icon="mdi:lock-reset"></span></div>Set a New Password
+        </div>
+        <form id="reset-password-form">
+          <input type="hidden" name="token" />
+          <div class="form-row" style="margin-bottom:16px">
+            <div class="form-group">
+              <label class="form-label" for="reset-newPassword">New password</label>
+              <div class="pw-wrap">
+                <input class="form-input" id="reset-newPassword" name="newPassword" type="password" required
+                  autocomplete="new-password" />
+                <button type="button" class="pw-toggle"><span class="iconify"
+                    data-icon="mdi:eye-outline"></span></button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reset-confirmNewPassword">Confirm new password</label>
+              <input class="form-input" id="reset-confirmNewPassword" name="confirmNewPassword" type="password" required
+                autocomplete="new-password" />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Reset password →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     LEADERBOARD
+══════════════════════════════════════════ -->
+  <div id="page-leaderboard" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Reputation Leaderboard</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Top Researchers</div>
+      <p class="reveal delay-2"
+        style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Ranked
+        by reputation points earned through research uploads, approvals, views, and peer endorsements.</p>
+    </div>
+    <div style="padding:48px;max-width:860px">
+      <div id="leaderboard-list" class="leaderboard-list">
+        <div class="loading-placeholder">Loading leaderboard…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     MY PAPERS
+══════════════════════════════════════════ -->
+  <div id="page-mypapers" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// My Research</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">My Submitted Papers</div>
+    </div>
+    <div style="padding:32px 48px;display:flex;justify-content:flex-end">
+      <button class="btn-primary" data-go="upload">+ Upload New Paper</button>
+    </div>
+    <div class="repo-grid" id="mypapers-grid">
+      <div class="loading-placeholder" style="grid-column:1/-1">Loading…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+     UPLOAD
+══════════════════════════════════════════ -->
+  <div id="page-upload" class="page">
+    <div class="page-hero-header">
+      <div class="section-label reveal" style="color:var(--accent)">// Submit Research</div>
+      <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Upload Your Research</div>
+      <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;line-height:1.65">Share your papers,
+        datasets, and dashboards. Earn <strong style="color:var(--accent)">+5 rep</strong> on submit, <strong
+          style="color:var(--accent)">+50 rep</strong> when approved.</p>
+    </div>
+    <div class="upload-gate"
+      style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:80px 48px;text-align:center">
+      <div style="font-size:3rem;margin-bottom:20px"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
+      <div
+        style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--gray-800);margin-bottom:10px">
+        Sign in to Upload Research</div>
+      <p style="color:var(--gray-400);margin-bottom:28px;max-width:400px">Create a free researcher account to submit
+        papers, datasets, and dashboards.</p>
+      <div style="display:flex;gap:12px">
+        <button class="btn-primary" data-open-modal="modal-register">Create Account</button>
+        <button class="btn-ghost" style="color:var(--gray-600);border-color:var(--gray-200)"
+          data-open-modal="modal-login">Sign In</button>
+      </div>
+    </div>
+    <div class="upload-content upload-form-wrap">
+      <form id="upload-research-form" enctype="multipart/form-data">
+        <div class="form-card reveal">
+          <div class="form-card-title">
+            <div class="icon"><span class="iconify" data-icon="mdi:file-document-outline"></span></div>Research Details
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label" for="upload-title">Title *</label><input
+                class="form-input" id="upload-title" name="title" type="text" placeholder="Full title of your research"
+                required /></div>
+            <div class="form-group"><label class="form-label" for="upload-research-type">Research Type</label><select
+                class="form-select" id="upload-research-type" name="research_type">
+                <option>Research Paper</option>
+                <option>Dataset</option>
+                <option>Dashboard</option>
+                <option>Literature Review</option>
+              </select></div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label class="form-label" for="upload-abstract">Abstract *</label><textarea
+                class="form-textarea" id="upload-abstract" name="abstract"
+                placeholder="Concise summary of your research, methodology, and key findings…" required></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label" for="upload-domain">Research Domain *</label><select
+                class="form-select" id="upload-domain" name="domain" required>
+                <option value="Machine Learning">Machine Learning</option>
+                <option value="Statistics">Statistics</option>
+                <option value="NLP">Natural Language Processing</option>
+                <option value="Computer Vision">Computer Vision</option>
+                <option value="Graph ML">Graph Machine Learning</option>
+                <option value="Bioinformatics">Bioinformatics</option>
+                <option value="Robotics">Robotics</option>
+                <option value="Time Series">Time Series</option>
+              </select></div>
+            <div class="form-group"><label class="form-label" for="upload-keywords">Keywords</label><input
+                class="form-input" id="upload-keywords" name="keywords" type="text"
+                placeholder="e.g. deep learning, forecasting, NLP" /></div>
+          </div>
+        </div>
+        <div class="form-card reveal delay-1">
+          <div class="form-card-title">
+            <div class="icon">👤</div>Authors
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label class="form-label" for="upload-co-authors">Co-Authors</label><input
+                class="form-input" id="upload-co-authors" name="co_authors" type="text"
+                placeholder="Separate names with commas" /></div>
+          </div>
+        </div>
+        <div class="form-card reveal delay-2">
+          <div class="form-card-title">
+            <div class="icon">📁</div>Upload Files
+          </div>
+          <div class="dropzone" data-file-open="paper-file-input">
+            <input type="file" id="paper-file-input" name="paper" accept=".pdf,.doc,.docx" style="display:none"
+              data-dropzone-text="paper-dz-text" />
+            <div class="dropzone-icon" id="paper-dz-icon"><span class="iconify" data-icon="mdi:cloud-upload-outline"></span></div>
+            <h4 id="paper-dz-text">Click or drag to upload your research paper</h4>
+            <p>PDF, DOC, DOCX · Max 50MB</p>
+          </div>
+          <div style="margin-top:20px">
+            <label class="form-label" for="support-file-input" style="margin-bottom:10px;display:block">Supporting Files
+              (Optional)</label>
+            <div class="dropzone" data-file-open="support-file-input">
+              <input type="file" id="support-file-input" name="support" multiple accept=".csv,.zip,.ipynb,.r,.py,.xlsx"
+                style="display:none" data-dropzone-text="support-dz-text" />
+              <div class="dropzone-icon" id="support-dz-icon" style="font-size:1.8rem"><span class="iconify" data-icon="mdi:database-outline"></span></div>
+              <h4 id="support-dz-text">Datasets, code, or supplementary materials</h4>
+              <p>CSV, ZIP, IPYNB, R, PY, XLSX · Max 200MB</p>
+            </div>
+          </div>
+        </div>
+        <div class="submit-row reveal delay-3">
+          <button type="button" class="btn-ghost" style="color:var(--gray-600);border-color:var(--gray-200)">Save
+            Draft</button>
+          <button type="submit" class="btn-primary">Submit for Review →</button>
+        </div>
       </form>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     DASHBOARDS
+  <!-- ══════════════════════════════════════════
+     ADMIN
 ══════════════════════════════════════════ -->
-<div id="page-dashboards" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Dashboards</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Research Dashboards</div>
+  <div id="page-admin" class="page">
+    <div class="admin-gate"
+      style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:60px">
+      <div style="font-size:3rem;margin-bottom:20px"><span class="iconify" data-icon="mdi:shield-lock-outline"></span>
+      </div>
+      <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:10px">Admin Access
+        Required</div>
+      <button class="btn-primary" data-open-modal="modal-login">Sign In as Admin</button>
+    </div>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Overview</div>
+          <div class="sidebar-item active" data-admin-tab="dashboard"><span class="sidebar-icon"><span class="iconify"
+                data-icon="mdi:hexagon"></span></span> Dashboard</div>
+          <div class="sidebar-item" data-admin-tab="analytics"><span class="sidebar-icon"><span class="iconify"
+                data-icon="mdi:chart-bar"></span></span> Analytics</div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Content</div>
+          <div class="sidebar-item" data-admin-tab="submissions"><span class="sidebar-icon"><span class="iconify"
+                data-icon="mdi:file-document-outline"></span></span> Submissions</div>
+          <div class="sidebar-item" data-admin-tab="news-mgmt"><span class="sidebar-icon"><span class="iconify"
+                data-icon="mdi:newspaper-variant-outline"></span></span> News</div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">Users</div>
+          <div class="sidebar-item" data-admin-tab="users"><span class="sidebar-icon"><span class="iconify"
+                data-icon="mdi:account-multiple-outline"></span></span> All Users</div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">System</div>
+          <div class="sidebar-item" data-admin-tab="audit"><span class="sidebar-icon"><span class="iconify"
+                data-icon="mdi:clipboard-text-outline"></span></span> Audit Log</div>
+        </div>
+      </aside>
+      <main class="admin-main">
+        <!-- Dashboard tab -->
+        <div id="admin-tab-dashboard" class="admin-tab">
+          <div class="admin-topbar">
+            <div class="admin-title">Admin Dashboard</div><button class="btn-primary btn-sm"
+              data-open-modal="modal-add-news">+ New Article</button>
+          </div>
+          <div class="admin-cards">
+            <div class="admin-kpi">
+              <div class="kpi-icon" style="background:#eff6ff;color:#2563eb"><span class="iconify"
+                  data-icon="mdi:file-document-outline"></span></div>
+              <div class="kpi-val" id="kpi-papers">—</div>
+              <div class="kpi-label">Total Papers</div>
+            </div>
+            <div class="admin-kpi">
+              <div class="kpi-icon" style="background:#fef9c3;color:#ca8a04"><span class="iconify"
+                  data-icon="mdi:clock-outline"></span></div>
+              <div class="kpi-val" id="kpi-pending">—</div>
+              <div class="kpi-label">Pending Review</div>
+            </div>
+            <div class="admin-kpi">
+              <div class="kpi-icon" style="background:#f0fdf4;color:#16a34a">👤</div>
+              <div class="kpi-val" id="kpi-users">—</div>
+              <div class="kpi-label">Researchers</div>
+            </div>
+            <div class="admin-kpi">
+              <div class="kpi-icon" style="background:#fdf4ff;color:#9333ea"><span class="iconify"
+                  data-icon="mdi:award-outline"></span></div>
+              <div class="kpi-val" id="kpi-badges">—</div>
+              <div class="kpi-label">Badges Awarded</div>
+            </div>
+          </div>
+          <div class="admin-table-card">
+            <div class="table-header">
+              <div class="table-title">Recent Submissions</div>
+              <div style="display:flex;gap:6px">
+                <button class="filter-chip active" data-sub-filter="all">All</button>
+                <button class="filter-chip" data-sub-filter="pending">Pending</button>
+                <button class="filter-chip" data-sub-filter="review">Review</button>
+                <button class="filter-chip" data-sub-filter="approved">Approved</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Domain</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-submissions-tbody">
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Analytics tab -->
+        <div id="admin-tab-analytics" class="admin-tab" style="display:none">
+          <div class="admin-topbar">
+            <div class="admin-title">System Analytics</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+            <div class="admin-table-card" style="padding:20px">
+              <h3>Submission Trends</h3><canvas id="admin-chart-trends" height="200"></canvas>
+            </div>
+            <div class="admin-table-card" style="padding:20px">
+              <h3>Domain Distribution</h3><canvas id="admin-chart-domains" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Submissions tab -->
+        <div id="admin-tab-submissions" class="admin-tab" style="display:none">
+          <div class="admin-topbar">
+            <div class="admin-title">All Submissions</div>
+          </div>
+          <div class="admin-table-card">
+            <div class="table-header">
+              <div class="table-title">Papers</div>
+              <div style="display:flex;gap:6px"><button class="filter-chip active"
+                  data-sub-filter="all">All</button><button class="filter-chip"
+                  data-sub-filter="pending">Pending</button><button class="filter-chip"
+                  data-sub-filter="approved">Approved</button><button class="filter-chip"
+                  data-sub-filter="rejected">Rejected</button></div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Domain</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-submissions-tbody-2">
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Users tab -->
+        <div id="admin-tab-users" class="admin-tab" style="display:none">
+          <div class="admin-topbar">
+            <div class="admin-title">All Users</div>
+          </div>
+          <div class="admin-table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Rep</th>
+                  <th>Level</th>
+                  <th>Badges</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-tbody">
+                <tr>
+                  <td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- News tab -->
+        <div id="admin-tab-news-mgmt" class="admin-tab" style="display:none">
+          <div class="admin-topbar">
+            <div class="admin-title">News Management</div><button class="btn-primary btn-sm"
+              data-open-modal="modal-add-news">+ New Article</button>
+          </div>
+          <div id="admin-news-list">Loading…</div>
+        </div>
+        <!-- Audit tab -->
+        <div id="admin-tab-audit" class="admin-tab" style="display:none">
+          <div class="admin-topbar">
+            <div class="admin-title">Audit Log</div>
+          </div>
+          <div class="admin-table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Target</th>
+                  <th>IP</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="admin-audit-tbody">
+                <tr>
+                  <td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
   </div>
-  <div class="dash-grid">
-    <div class="dash-card large reveal"><div class="dash-chart-area"><canvas id="dashBigChart" width="900" height="300"></canvas></div><div class="dash-info"><div class="dash-title">Research Publication Volume — 12-Month Trend</div><div class="dash-desc">Monthly publication output across all domains.</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val" id="dash-total-papers">—</div><div class="dash-stat-lbl">Total papers</div></div><div class="dash-stat"><div class="dash-stat-val" id="dash-total-researchers">—</div><div class="dash-stat-lbl">Researchers</div></div></div></div></div>
-    <div class="dash-card reveal delay-1"><div class="dash-chart-area"><canvas id="dashPie" width="400" height="240"></canvas></div><div class="dash-info"><div class="dash-title">Research Domain Distribution</div><div class="dash-desc">Breakdown of publications by domain for the current academic year.</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val" id="dash-domains">—</div><div class="dash-stat-lbl">Domains active</div></div><div class="dash-stat"><div class="dash-stat-val" id="dash-endorsed">—</div><div class="dash-stat-lbl">Endorsements</div></div></div></div></div>
-    <div class="dash-card reveal delay-2"><div class="dash-chart-area"><canvas id="dashRadar" width="400" height="240"></canvas></div><div class="dash-info"><div class="dash-title">Community Engagement</div><div class="dash-desc">Views, endorsements, badges earned, and active researcher contributions.</div><div class="dash-stats"><div class="dash-stat"><div class="dash-stat-val" id="dash-views">—</div><div class="dash-stat-lbl">Total views</div></div><div class="dash-stat"><div class="dash-stat-val" id="dash-badges">—</div><div class="dash-stat-lbl">Badges awarded</div></div></div></div></div>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     NEWS
+  <!-- ══════════════════════════════════════════
+     MODALS
 ══════════════════════════════════════════ -->
-<div id="page-news" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// News & Updates</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Latest from Data Voyage</div>
+  <!-- LOGIN -->
+  <div class="modal-backdrop" id="modal-login" style="display:none">
+    <div class="modal-box">
+      <button class="modal-close" data-close-modal>✕</button>
+      <div class="modal-logo"><img src="/images/data_voyage_logo.png" alt="Logo"
+          style="width:48px; height:auto; border-radius:6px;" /></div>
+      <h2 class="modal-title">Welcome back</h2>
+      <p class="modal-subtitle">Sign in to your Data Voyage account</p>
+      <form id="login-form">
+        <div class="form-group" style="margin-bottom:16px"><label class="form-label"
+            for="login-email">Email</label><input class="form-input" id="login-email" name="email" type="email"
+            placeholder="your@email.com" required autocomplete="email" /></div>
+        <div class="form-group" style="margin-bottom:24px"><label class="form-label"
+            for="login-password">Password</label>
+          <div class="pw-wrap"><input class="form-input" id="login-password" name="password" type="password"
+              placeholder="Your password" required autocomplete="current-password" /><button type="button"
+              class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button></div>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Sign In →</button>
+      </form>
+      <div style="display:flex;justify-content:center;margin-top:12px">
+        <a href="#" data-close-open-modals="modal-login:modal-forgot-password"
+          style="font-size:0.86rem;color:var(--primary);font-weight:600">Forgot password?</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px">
+        <a class="btn-ghost" style="justify-content:center;gap:10px" href="/api/auth/oauth/google">
+          <span class="iconify" data-icon="logos:google-icon"></span> Continue with Google
+        </a>
+        <a class="btn-ghost" style="justify-content:center;gap:10px" href="/api/auth/oauth/linkedin">
+          <span class="iconify" data-icon="logos:linkedin-icon"></span> Continue with LinkedIn
+        </a>
+        <a class="btn-ghost" style="justify-content:center;gap:10px" href="/api/auth/oauth/github">
+          <span class="iconify" data-icon="logos:github-icon"></span> Continue with GitHub
+        </a>
+      </div>
+      <p class="modal-switch">Don't have an account? <a href="#" data-switch-modal="modal-register">Create one free</a>
+      </p>
+    </div>
   </div>
-  <div id="news-featured-area" style="padding:48px 48px 0"><div class="loading-placeholder">Loading…</div></div>
-  <div id="news-filters-bar" style="padding:12px 48px 0"></div>
-  <div id="news-page-list" class="news-page-list"></div>
-  <div id="news-pagination" style="display:flex;gap:8px;justify-content:center;padding:0 48px 48px"></div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     RESEARCHERS DIRECTORY
-══════════════════════════════════════════ -->
-<div id="page-profiles" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Researchers</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Our Research Community</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Meet the people driving data science forward. Click any card to view their full profile.</p>
-  </div>
-  <div class="repo-filters" style="position:sticky;top:var(--nav-h)">
-    <span class="filter-label">Search:</span>
-    <input class="filter-search" id="profiles-search" type="text" placeholder="Search by name…"/>
-    <span class="filter-label" style="margin-left:0">Department:</span>
-    <select class="form-select" id="profiles-dept" style="width:220px">
-      <option value="all">All</option>
-      <option value="Data Science">Data Science</option>
-      <option value="Computer Science">Computer Science</option>
-      <option value="Statistics">Statistics</option>
-      <option value="Engineering">Engineering</option>
-      <option value="Mathematics">Mathematics</option>
-    </select>
-    <span class="filter-label" style="margin-left:0">Domain:</span>
-    <select class="form-select" id="profiles-domain" style="width:220px">
-      <option value="all">All</option>
-      <option value="Machine Learning">Machine Learning</option>
-      <option value="Statistics">Statistics</option>
-      <option value="NLP">NLP</option>
-      <option value="Computer Vision">Computer Vision</option>
-      <option value="Graph ML">Graph ML</option>
-      <option value="Bioinformatics">Bioinformatics</option>
-      <option value="Robotics">Robotics</option>
-      <option value="Time Series">Time Series</option>
-    </select>
-  </div>
-  <div class="profiles-grid" id="profiles-grid"><div class="loading-placeholder" style="grid-column:1/-1">Loading…</div></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SINGLE RESEARCHER PROFILE
-══════════════════════════════════════════ -->
-<div id="page-viewprofile" class="page">
-  <!-- Dynamically populated by JS -->
-  <div id="viewprofile-content"><div class="loading-placeholder" style="padding:80px">Loading profile…</div></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     MY PROFILE (own profile edit)
-══════════════════════════════════════════ -->
-<div id="page-myprofile" class="page">
-  <div id="myprofile-content"><div class="loading-placeholder" style="padding:80px">Loading…</div></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SETTINGS
-══════════════════════════════════════════ -->
-<div id="page-settings" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Settings</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Account Settings</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:640px;line-height:1.65">
-      Manage your profile, security, notifications, and privacy preferences.
-    </p>
-  </div>
-  <div id="settings-content" style="padding:32px 48px 60px;max-width:1100px;margin:0 auto">
-    <div class="loading-placeholder">Loading settings…</div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     RESET PASSWORD
-══════════════════════════════════════════ -->
-<div id="page-resetpassword" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Account</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Reset Password</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:640px;line-height:1.65">
-      Choose a new password for your account.
-    </p>
-  </div>
-  <div style="padding:32px 48px 60px;max-width:980px;margin:0 auto">
-    <div class="form-card reveal" style="max-width:680px;margin:0 auto">
-      <div class="form-card-title"><div class="icon"><span class="iconify" data-icon="mdi:lock-reset"></span></div>Set a New Password</div>
-      <form id="reset-password-form">
-        <input type="hidden" name="token" />
-        <div class="form-row" style="margin-bottom:16px">
+  <!-- REGISTER -->
+  <div class="modal-backdrop" id="modal-register" style="display:none">
+    <div class="modal-box" style="max-width:560px">
+      <button class="modal-close" data-close-modal>✕</button>
+      <div class="modal-logo"><img src="/images/data_voyage_logo.png" alt="Logo"
+          style="width:48px; height:auto; border-radius:6px;" /></div>
+      <h2 class="modal-title">Join Data Voyage</h2>
+      <p class="modal-subtitle">Create your researcher account and start earning reputation</p>
+      <form id="register-form">
+        <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="reset-newPassword">New password</label>
+            <label class="form-label" for="first_name">First Name *</label>
+            <input class="form-input" id="first_name" name="first_name" type="text" placeholder="Jane" required
+              autocomplete="given-name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="last_name">Last Name *</label>
+            <input class="form-input" id="last_name" name="last_name" type="text" placeholder="Doe" required
+              autocomplete="family-name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="department">Department</label>
+          <input class="form-input" id="department" name="department" type="text" placeholder="Data Science" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email *</label>
+          <input class="form-input" id="email" name="email" type="email" placeholder="your@university.edu" required
+            autocomplete="email" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="password">Password *</label>
             <div class="pw-wrap">
-              <input class="form-input" id="reset-newPassword" name="newPassword" type="password" required autocomplete="new-password"/>
+              <input class="form-input" id="password" name="password" type="password"
+                placeholder="8+ chars, uppercase, number" required autocomplete="new-password" />
               <button type="button" class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label" for="reset-confirmNewPassword">Confirm new password</label>
-            <input class="form-input" id="reset-confirmNewPassword" name="confirmNewPassword" type="password" required autocomplete="new-password"/>
+            <label class="form-label" for="password2">Confirm *</label>
+            <input class="form-input" id="password2" name="password2" type="password" placeholder="Repeat password"
+              required autocomplete="new-password" />
           </div>
         </div>
-        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Reset password →</button>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Create Account →</button>
+      </form>
+      <p class="modal-switch">Already have an account? <a href="#" data-switch-modal="modal-login">Sign in</a></p>
+    </div>
+  </div>
+
+  <!-- ADD NEWS MODAL -->
+  <div class="modal-backdrop" id="modal-add-news" style="display:none">
+    <div class="modal-box" style="max-width:580px">
+      <button class="modal-close" data-close-modal>✕</button>
+      <h2 class="modal-title">New News Article</h2>
+      <form id="admin-news-form">
+        <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="news_title">Title
+            *</label><input class="form-input" id="news_title" name="news_title" type="text" required /></div>
+        <div class="form-row" style="margin-bottom:16px">
+          <div class="form-group"><label class="form-label" for="news_category">Category</label><select
+              class="form-select" id="news_category" name="news_category">
+              <option>Announcement</option>
+              <option>Award</option>
+              <option>Conference</option>
+              <option>Research</option>
+              <option>Collaboration</option>
+              <option>Funding</option>
+              <option>Education</option>
+            </select></div>
+          <div class="form-group" style="justify-content:flex-end;padding-top:24px"><label
+              style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:var(--gray-600)"><input
+                type="checkbox" id="news_published" name="news_published"
+                style="width:16px;height:16px;accent-color:var(--primary)" /> Publish now</label></div>
+        </div>
+        <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="news_summary">Summary
+            *</label><textarea class="form-textarea" id="news_summary" name="news_summary" style="min-height:80px"
+            required></textarea></div>
+        <div class="form-group" style="margin-bottom:24px"><label class="form-label" for="news_body">Body
+            (optional)</label><textarea class="form-textarea" id="news_body" name="news_body"
+            style="min-height:100px"></textarea></div>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Create Article →</button>
       </form>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     LEADERBOARD
-══════════════════════════════════════════ -->
-<div id="page-leaderboard" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Reputation Leaderboard</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Top Researchers</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;font-size:0.95rem;max-width:500px;line-height:1.65">Ranked by reputation points earned through research uploads, approvals, views, and peer endorsements.</p>
-  </div>
-  <div style="padding:48px;max-width:860px">
-    <div id="leaderboard-list" class="leaderboard-list"><div class="loading-placeholder">Loading leaderboard…</div></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     MY PAPERS
-══════════════════════════════════════════ -->
-<div id="page-mypapers" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// My Research</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">My Submitted Papers</div>
-  </div>
-  <div style="padding:32px 48px;display:flex;justify-content:flex-end">
-    <button class="btn-primary" data-go="upload">+ Upload New Paper</button>
-  </div>
-  <div class="repo-grid" id="mypapers-grid"><div class="loading-placeholder" style="grid-column:1/-1">Loading…</div></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     UPLOAD
-══════════════════════════════════════════ -->
-<div id="page-upload" class="page">
-  <div class="page-hero-header">
-    <div class="section-label reveal" style="color:var(--accent)">// Submit Research</div>
-    <div class="section-title section-title-light reveal delay-1" style="margin-top:10px">Upload Your Research</div>
-    <p class="reveal delay-2" style="color:rgba(255,255,255,0.48);margin-top:12px;line-height:1.65">Share your papers, datasets, and dashboards. Earn <strong style="color:var(--accent)">+5 rep</strong> on submit, <strong style="color:var(--accent)">+50 rep</strong> when approved.</p>
-  </div>
-  <div class="upload-gate" style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:80px 48px;text-align:center">
-    <div style="font-size:3rem;margin-bottom:20px"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
-    <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--gray-800);margin-bottom:10px">Sign in to Upload Research</div>
-    <p style="color:var(--gray-400);margin-bottom:28px;max-width:400px">Create a free researcher account to submit papers, datasets, and dashboards.</p>
-    <div style="display:flex;gap:12px">
-      <button class="btn-primary" data-open-modal="modal-register">Create Account</button>
-      <button class="btn-ghost" style="color:var(--gray-600);border-color:var(--gray-200)" data-open-modal="modal-login">Sign In</button>
+  <!-- PAPER DETAIL MODAL -->
+  <div class="modal-backdrop" id="modal-paper-detail" style="display:none">
+    <div class="modal-box" style="max-width:980px">
+      <button class="modal-close" data-close-modal>✕</button>
+      <div id="paper-detail-body"></div>
     </div>
   </div>
-  <div class="upload-content upload-form-wrap">
-    <form id="upload-research-form" enctype="multipart/form-data">
-      <div class="form-card reveal">
-        <div class="form-card-title"><div class="icon"><span class="iconify" data-icon="mdi:file-document-outline"></span></div>Research Details</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label" for="upload-title">Title *</label><input class="form-input" id="upload-title" name="title" type="text" placeholder="Full title of your research" required/></div>
-          <div class="form-group"><label class="form-label" for="upload-research-type">Research Type</label><select class="form-select" id="upload-research-type" name="research_type"><option>Research Paper</option><option>Dataset</option><option>Dashboard</option><option>Literature Review</option></select></div>
-        </div>
-        <div class="form-row full"><div class="form-group"><label class="form-label" for="upload-abstract">Abstract *</label><textarea class="form-textarea" id="upload-abstract" name="abstract" placeholder="Concise summary of your research, methodology, and key findings…" required></textarea></div></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label" for="upload-domain">Research Domain *</label><select class="form-select" id="upload-domain" name="domain" required><option value="Machine Learning">Machine Learning</option><option value="Statistics">Statistics</option><option value="NLP">Natural Language Processing</option><option value="Computer Vision">Computer Vision</option><option value="Graph ML">Graph Machine Learning</option><option value="Bioinformatics">Bioinformatics</option><option value="Robotics">Robotics</option><option value="Time Series">Time Series</option></select></div>
-          <div class="form-group"><label class="form-label" for="upload-keywords">Keywords</label><input class="form-input" id="upload-keywords" name="keywords" type="text" placeholder="e.g. deep learning, forecasting, NLP"/></div>
-        </div>
-      </div>
-      <div class="form-card reveal delay-1">
-        <div class="form-card-title"><div class="icon">👤</div>Authors</div>
-        <div class="form-row full"><div class="form-group"><label class="form-label" for="upload-co-authors">Co-Authors</label><input class="form-input" id="upload-co-authors" name="co_authors" type="text" placeholder="Separate names with commas"/></div></div>
-      </div>
-      <div class="form-card reveal delay-2">
-        <div class="form-card-title"><div class="icon">📁</div>Upload Files</div>
-        <div class="dropzone" data-file-open="paper-file-input">
-          <input type="file" id="paper-file-input" name="paper" accept=".pdf,.doc,.docx" style="display:none" data-dropzone-text="paper-dz-text"/>
-          <div class="dropzone-icon">⬆</div><h4 id="paper-dz-text">Click or drag to upload your research paper</h4><p>PDF, DOC, DOCX · Max 50MB</p>
-        </div>
-        <div style="margin-top:20px">
-          <label class="form-label" for="support-file-input" style="margin-bottom:10px;display:block">Supporting Files (Optional)</label>
-          <div class="dropzone" data-file-open="support-file-input">
-            <input type="file" id="support-file-input" name="support" multiple accept=".csv,.zip,.ipynb,.r,.py,.xlsx" style="display:none" data-dropzone-text="support-dz-text"/>
-            <div class="dropzone-icon" style="font-size:1.8rem"><span class="iconify" data-icon="mdi:database-outline"></span></div><h4 id="support-dz-text">Datasets, code, or supplementary materials</h4><p>CSV, ZIP, IPYNB, R, PY, XLSX · Max 200MB</p>
-          </div>
-        </div>
-      </div>
-      <div class="submit-row reveal delay-3">
-        <button type="button" class="btn-ghost" style="color:var(--gray-600);border-color:var(--gray-200)">Save Draft</button>
-        <button type="submit" class="btn-primary">Submit for Review →</button>
-      </div>
-    </form>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     ADMIN
-══════════════════════════════════════════ -->
-<div id="page-admin" class="page">
-  <div class="admin-gate" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:60px">
-    <div style="font-size:3rem;margin-bottom:20px"><span class="iconify" data-icon="mdi:shield-lock-outline"></span></div>
-    <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:10px">Admin Access Required</div>
-    <button class="btn-primary" data-open-modal="modal-login">Sign In as Admin</button>
-  </div>
-  <div class="admin-layout">
-    <aside class="admin-sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Overview</div>
-        <div class="sidebar-item active" data-admin-tab="dashboard"><span class="sidebar-icon"><span class="iconify" data-icon="mdi:hexagon"></span></span> Dashboard</div>
-        <div class="sidebar-item" data-admin-tab="analytics"><span class="sidebar-icon"><span class="iconify" data-icon="mdi:chart-bar"></span></span> Analytics</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Content</div>
-        <div class="sidebar-item" data-admin-tab="submissions"><span class="sidebar-icon"><span class="iconify" data-icon="mdi:file-document-outline"></span></span> Submissions</div>
-        <div class="sidebar-item" data-admin-tab="news-mgmt"><span class="sidebar-icon"><span class="iconify" data-icon="mdi:newspaper-variant-outline"></span></span> News</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Users</div>
-        <div class="sidebar-item" data-admin-tab="users"><span class="sidebar-icon"><span class="iconify" data-icon="mdi:account-multiple-outline"></span></span> All Users</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">System</div>
-        <div class="sidebar-item" data-admin-tab="audit"><span class="sidebar-icon"><span class="iconify" data-icon="mdi:clipboard-text-outline"></span></span> Audit Log</div>
-      </div>
-    </aside>
-    <main class="admin-main">
-      <!-- Dashboard tab -->
-      <div id="admin-tab-dashboard" class="admin-tab">
-        <div class="admin-topbar"><div class="admin-title">Admin Dashboard</div><button class="btn-primary btn-sm" data-open-modal="modal-add-news">+ New Article</button></div>
-        <div class="admin-cards">
-          <div class="admin-kpi"><div class="kpi-icon" style="background:#eff6ff;color:#2563eb"><span class="iconify" data-icon="mdi:file-document-outline"></span></div><div class="kpi-val" id="kpi-papers">—</div><div class="kpi-label">Total Papers</div></div>
-          <div class="admin-kpi"><div class="kpi-icon" style="background:#fef9c3;color:#ca8a04"><span class="iconify" data-icon="mdi:clock-outline"></span></div><div class="kpi-val" id="kpi-pending">—</div><div class="kpi-label">Pending Review</div></div>
-          <div class="admin-kpi"><div class="kpi-icon" style="background:#f0fdf4;color:#16a34a">👤</div><div class="kpi-val" id="kpi-users">—</div><div class="kpi-label">Researchers</div></div>
-          <div class="admin-kpi"><div class="kpi-icon" style="background:#fdf4ff;color:#9333ea"><span class="iconify" data-icon="mdi:award-outline"></span></div><div class="kpi-val" id="kpi-badges">—</div><div class="kpi-label">Badges Awarded</div></div>
+  <!-- CODE VIEWER MODAL -->
+  <div class="modal-backdrop" id="modal-code-viewer" style="display:none">
+    <div class="modal-box" style="max-width:1100px; height:85vh; display:flex; flex-direction:column">
+      <button class="modal-close" data-close-modal>✕</button>
+      <div class="code-viewer-head"
+        style="padding:16px 24px; border-bottom:1px solid var(--gray-100); display:flex; align-items:center; justify-content:space-between">
+        <div style="display:flex; align-items:center; gap:12px">
+          <div class="icon" style="color:var(--primary); font-size:1.2rem"><span class="iconify"
+              data-icon="mdi:file-code-outline"></span></div>
+          <div style="font-weight:700; color:var(--gray-800)" id="code-viewer-filename">File.js</div>
         </div>
-        <div class="admin-table-card">
-          <div class="table-header">
-            <div class="table-title">Recent Submissions</div>
-            <div style="display:flex;gap:6px">
-              <button class="filter-chip active" data-sub-filter="all">All</button>
-              <button class="filter-chip" data-sub-filter="pending">Pending</button>
-              <button class="filter-chip" data-sub-filter="review">Review</button>
-              <button class="filter-chip" data-sub-filter="approved">Approved</button>
-            </div>
-          </div>
-          <table><thead><tr><th>Title</th><th>Author</th><th>Domain</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="admin-submissions-tbody"><tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td></tr></tbody></table>
-        </div>
+        <a class="btn-ghost btn-sm" id="code-viewer-download" href="#" target="_blank">Download File</a>
       </div>
-      <!-- Submissions tab -->
-      <div id="admin-tab-submissions" class="admin-tab" style="display:none">
-        <div class="admin-topbar"><div class="admin-title">All Submissions</div></div>
-        <div class="admin-table-card">
-          <div class="table-header"><div class="table-title">Papers</div><div style="display:flex;gap:6px"><button class="filter-chip active" data-sub-filter="all">All</button><button class="filter-chip" data-sub-filter="pending">Pending</button><button class="filter-chip" data-sub-filter="approved">Approved</button><button class="filter-chip" data-sub-filter="rejected">Rejected</button></div></div>
-          <table><thead><tr><th>Title</th><th>Author</th><th>Domain</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="admin-submissions-tbody-2"><tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td></tr></tbody></table>
-        </div>
+      <div
+        style="flex:1; overflow:auto; background:#0f111a; border-bottom-left-radius:12px; border-bottom-right-radius:12px">
+        <pre id="code-viewer-content"
+          style="margin:0; padding:24px; color:#a6accd; font-family:var(--font-mono); font-size:0.9rem; line-height:1.6; white-space:pre-wrap; word-break:break-all"></pre>
       </div>
-      <!-- Users tab -->
-      <div id="admin-tab-users" class="admin-tab" style="display:none">
-        <div class="admin-topbar"><div class="admin-title">All Users</div></div>
-        <div class="admin-table-card">
-          <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Rep</th><th>Level</th><th>Badges</th><th>Joined</th><th>Actions</th></tr></thead>
-          <tbody id="admin-users-tbody"><tr><td colspan="8" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td></tr></tbody></table>
-        </div>
-      </div>
-      <!-- News tab -->
-      <div id="admin-tab-news-mgmt" class="admin-tab" style="display:none">
-        <div class="admin-topbar"><div class="admin-title">News Management</div><button class="btn-primary btn-sm" data-open-modal="modal-add-news">+ New Article</button></div>
-        <div id="admin-news-list">Loading…</div>
-      </div>
-      <!-- Audit tab -->
-      <div id="admin-tab-audit" class="admin-tab" style="display:none">
-        <div class="admin-topbar"><div class="admin-title">Audit Log</div></div>
-        <div class="admin-table-card">
-          <table><thead><tr><th>User</th><th>Action</th><th>Target</th><th>IP</th><th>Time</th></tr></thead>
-          <tbody id="admin-audit-tbody"><tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px">Loading…</td></tr></tbody></table>
-        </div>
-      </div>
-    </main>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     MODALS
-══════════════════════════════════════════ -->
-<!-- LOGIN -->
-<div class="modal-backdrop" id="modal-login" style="display:none">
-  <div class="modal-box">
-    <button class="modal-close" data-close-modal>✕</button>
-    <div class="modal-logo"><img src="/images/data_voyage_logo.png" alt="Logo" style="width:48px; height:auto; border-radius:6px;"/></div>
-    <h2 class="modal-title">Welcome back</h2>
-    <p class="modal-subtitle">Sign in to your Data Voyage account</p>
-    <form id="login-form">
-      <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="login-email">Email</label><input class="form-input" id="login-email" name="email" type="email" placeholder="your@email.com" required autocomplete="email"/></div>
-      <div class="form-group" style="margin-bottom:24px"><label class="form-label" for="login-password">Password</label><div class="pw-wrap"><input class="form-input" id="login-password" name="password" type="password" placeholder="Your password" required autocomplete="current-password"/><button type="button" class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button></div></div>
-      <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Sign In →</button>
-    </form>
-    <div style="display:flex;justify-content:center;margin-top:12px">
-      <a href="#" data-close-open-modals="modal-login:modal-forgot-password" style="font-size:0.86rem;color:var(--primary);font-weight:600">Forgot password?</a>
     </div>
-    <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px">
-      <a class="btn-ghost" style="justify-content:center" href="/api/auth/oauth/google">Continue with Google</a>
-      <a class="btn-ghost" style="justify-content:center" href="/api/auth/oauth/linkedin">Continue with LinkedIn</a>
-      <a class="btn-ghost" style="justify-content:center" href="/api/auth/oauth/github">Continue with GitHub</a>
+  </div>
+
+  <!-- NEWS DETAIL MODAL -->
+  <div class="modal-backdrop" id="modal-news-detail" style="display:none">
+    <div class="modal-box" style="max-width:860px">
+      <button class="modal-close" data-close-modal>✕</button>
+      <div id="news-detail-body"></div>
     </div>
-    <p class="modal-switch">Don't have an account? <a href="#" data-switch-modal="modal-register">Create one free</a></p>
   </div>
-</div>
 
-<!-- REGISTER -->
-<div class="modal-backdrop" id="modal-register" style="display:none">
-  <div class="modal-box" style="max-width:560px">
-    <button class="modal-close" data-close-modal>✕</button>
-    <div class="modal-logo"><img src="/images/data_voyage_logo.png" alt="Logo" style="width:48px; height:auto; border-radius:6px;"/></div>
-    <h2 class="modal-title">Join Data Voyage</h2>
-    <p class="modal-subtitle">Create your researcher account and start earning reputation</p>
-    <form id="register-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="first_name">First Name *</label>
-          <input class="form-input" id="first_name" name="first_name" type="text" placeholder="Jane" required autocomplete="given-name"/>
+  <!-- FORGOT PASSWORD MODAL -->
+  <div class="modal-backdrop" id="modal-forgot-password" style="display:none">
+    <div class="modal-box" style="max-width:520px">
+      <button class="modal-close" data-close-modal>✕</button>
+      <h2 class="modal-title">Reset your password</h2>
+      <p class="modal-subtitle">Enter your email and we’ll generate a reset link.</p>
+      <form id="forgot-password-form">
+        <div class="form-group" style="margin-bottom:18px">
+          <label class="form-label" for="forgot-email">Email</label>
+          <input class="form-input" id="forgot-email" name="email" type="email" placeholder="your@email.com" required
+            autocomplete="email" />
         </div>
-        <div class="form-group">
-          <label class="form-label" for="last_name">Last Name *</label>
-          <input class="form-input" id="last_name" name="last_name" type="text" placeholder="Doe" required autocomplete="family-name"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="department">Department</label>
-        <input class="form-input" id="department" name="department" type="text" placeholder="Data Science"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="email">Email *</label>
-        <input class="form-input" id="email" name="email" type="email" placeholder="your@university.edu" required autocomplete="email"/>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="password">Password *</label>
-          <div class="pw-wrap">
-            <input class="form-input" id="password" name="password" type="password" placeholder="8+ chars, uppercase, number" required autocomplete="new-password"/>
-            <button type="button" class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password2">Confirm *</label>
-          <input class="form-input" id="password2" name="password2" type="password" placeholder="Repeat password" required autocomplete="new-password"/>
-        </div>
-      </div>
-      <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Create Account →</button>
-    </form>
-    <p class="modal-switch">Already have an account? <a href="#" data-switch-modal="modal-login">Sign in</a></p>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Send reset link →</button>
+      </form>
+    </div>
   </div>
-</div>
 
-<!-- ADD NEWS MODAL -->
-<div class="modal-backdrop" id="modal-add-news" style="display:none">
-  <div class="modal-box" style="max-width:580px">
-    <button class="modal-close" data-close-modal>✕</button>
-    <h2 class="modal-title">New News Article</h2>
-    <form id="admin-news-form">
-      <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="news_title">Title *</label><input class="form-input" id="news_title" name="news_title" type="text" required/></div>
-      <div class="form-row" style="margin-bottom:16px">
-        <div class="form-group"><label class="form-label" for="news_category">Category</label><select class="form-select" id="news_category" name="news_category"><option>Announcement</option><option>Award</option><option>Conference</option><option>Research</option><option>Collaboration</option><option>Funding</option><option>Education</option></select></div>
-        <div class="form-group" style="justify-content:flex-end;padding-top:24px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:var(--gray-600)"><input type="checkbox" id="news_published" name="news_published" style="width:16px;height:16px;accent-color:var(--primary)"/> Publish now</label></div>
-      </div>
-      <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="news_summary">Summary *</label><textarea class="form-textarea" id="news_summary" name="news_summary" style="min-height:80px" required></textarea></div>
-      <div class="form-group" style="margin-bottom:24px"><label class="form-label" for="news_body">Body (optional)</label><textarea class="form-textarea" id="news_body" name="news_body" style="min-height:100px"></textarea></div>
-      <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Create Article →</button>
-    </form>
-  </div>
-</div>
+  <button class="scroll-top" aria-label="Scroll to top">↑</button>
 
-<!-- PAPER DETAIL MODAL -->
-<div class="modal-backdrop" id="modal-paper-detail" style="display:none">
-  <div class="modal-box" style="max-width:980px">
-    <button class="modal-close" data-close-modal>✕</button>
-    <div id="paper-detail-body"></div>
-  </div>
-</div>
-
-<!-- NEWS DETAIL MODAL -->
-<div class="modal-backdrop" id="modal-news-detail" style="display:none">
-  <div class="modal-box" style="max-width:860px">
-    <button class="modal-close" data-close-modal>✕</button>
-    <div id="news-detail-body"></div>
-  </div>
-</div>
-
-<!-- FORGOT PASSWORD MODAL -->
-<div class="modal-backdrop" id="modal-forgot-password" style="display:none">
-  <div class="modal-box" style="max-width:520px">
-    <button class="modal-close" data-close-modal>✕</button>
-    <h2 class="modal-title">Reset your password</h2>
-    <p class="modal-subtitle">Enter your email and we’ll generate a reset link.</p>
-    <form id="forgot-password-form">
-      <div class="form-group" style="margin-bottom:18px">
-        <label class="form-label" for="forgot-email">Email</label>
-        <input class="form-input" id="forgot-email" name="email" type="email" placeholder="your@email.com" required autocomplete="email"/>
-      </div>
-      <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Send reset link →</button>
-    </form>
-  </div>
-</div>
-
-<button class="scroll-top" aria-label="Scroll to top">↑</button>
-
-<script src="js/charts.js"></script>
-<script src="js/api.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/main.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
 </body>
+
 </html>

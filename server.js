@@ -94,7 +94,8 @@ app.use(helmet({
       imgSrc: ["'self'", 'data:', 'https:'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com', 'https://fonts.googleapis.com', 'data:'],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-      scriptSrc: ["'self'", 'https://code.iconify.design'],
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://code.iconify.design'],
+      scriptSrcAttr: ["'unsafe-inline'"],
       connectSrc: [
         "'self'",
         'https://api.iconify.design',
@@ -249,7 +250,8 @@ app.use((err, req, res, next) => {
 });
 
 const server = app.listen(PORT, () => {
-  console.log(`Data Voyage on http://localhost:${PORT}`);
+  console.log(`Data Voyage Local:   http://localhost:${PORT}`);
+  console.log(`Data Voyage Network: http://192.168.43.91:${PORT}`);
   console.log(`DB: ${process.env.DB_PATH || './data/datavoyage.db'}`);
 });
 

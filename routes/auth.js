@@ -170,7 +170,9 @@ router.post('/change-password', requireLogin, [
 
   const u = db.prepare('SELECT id,password_hash,oauth_provider FROM users WHERE id=?').get(req.session.userId);
   if (!u) return res.status(404).json({ error: 'User not found' });
-  if (!(await bcrypt.compare(currentPassword, u.password_hash)))
+  if (u.oauth_provider && !u.password_hash)
+    return res.status(400).json({ error: 'OAuth accounts do not have a local password. Please use your provider (Google/LinkedIn/GitHub) to manage security.' });
+  if (!u.password_hash || !(await bcrypt.compare(currentPassword, u.password_hash)))
     return res.status(401).json({ error: 'Current password is incorrect' });
 
   const hash = await bcrypt.hash(newPassword, 12);
@@ -197,6 +199,10 @@ router.post('/change-email', requireLogin, [
   if (!u.oauth_provider) {
     const pw = req.body.password || '';
     if (!pw) return res.status(400).json({ error: 'Password required' });
+    if (!u.password_hash) {
+      console.error(`User ${u.id} has no password_hash but oauth_provider is null`);
+      return res.status(500).json({ error: 'Account configuration error' });
+    }
     const ok = await bcrypt.compare(pw, u.password_hash);
     if (!ok) return res.status(401).json({ error: 'Password incorrect' });
   }

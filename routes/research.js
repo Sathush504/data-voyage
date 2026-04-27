@@ -9,6 +9,7 @@ const { validateRequest } = require('../middleware/validate');
 const db      = require('../config/db');
 const { requireLogin, requireAdmin } = require('../middleware/auth');
 const { awardPoints, checkAndAwardBadges } = require('./reputation');
+const aiService = require('../services/ai_service');
 const router  = express.Router();
 
 // Ensure uploads directory exists on fresh deploys
@@ -32,30 +33,59 @@ const upload  = multer({
 
 // GET /api/research — public approved list
 router.get('/', (req, res) => {
-  const { domain, q, page = 1 } = req.query;
+  const { domain, q, page = 1, sort = 'newest', year, has_file, min_endorsements } = req.query;
   const limit = 12, offset = (Number(page) - 1) * limit;
   const params = [];
   let where = `WHERE p.status='approved'`;
+
   if (domain && domain !== 'all') { where += ' AND p.domain=?'; params.push(domain); }
   if (q) {
     where += ' AND (p.title LIKE ? OR p.abstract LIKE ? OR p.keywords LIKE ? OR u.name LIKE ?)';
     const like = `%${q}%`; params.push(like, like, like, like);
   }
+  if (year) {
+    where += ` AND strftime('%Y', p.created_at) = ?`;
+    params.push(String(year));
+  }
+  if (has_file === '1') {
+    where += ` AND p.file_path IS NOT NULL AND p.file_path != ''`;
+  }
+  if (min_endorsements && Number(min_endorsements) > 0) {
+    where += ` AND (SELECT COUNT(*) FROM endorsements WHERE paper_id=p.id) >= ?`;
+    params.push(Number(min_endorsements));
+  }
+
+  const ORDER_MAP = {
+    newest:        'p.created_at DESC',
+    oldest:        'p.created_at ASC',
+    most_viewed:   'p.views DESC',
+    most_downloaded: 'p.downloads DESC',
+    most_endorsed: '(SELECT COUNT(*) FROM endorsements WHERE paper_id=p.id) DESC',
+  };
+  const orderBy = ORDER_MAP[sort] || ORDER_MAP.newest;
+
   const papers = db.prepare(
     `SELECT p.uuid,p.title,p.abstract,p.domain,p.keywords,p.co_authors,
             p.file_path,p.file_name,p.views,p.downloads,p.created_at,p.status,
+            p.ai_processing_status,
             u.name AS author_name,u.department AS author_dept,
             u.uuid AS author_uuid,u.avatar_url AS author_avatar,
             (SELECT COUNT(*) FROM endorsements WHERE paper_id=p.id) AS endorsements
      FROM papers p JOIN users u ON p.user_id=u.id ${where}
-     ORDER BY p.created_at DESC LIMIT ? OFFSET ?`
+     ORDER BY ${orderBy} LIMIT ? OFFSET ?`
   ).all(...params, limit, offset);
 
   const total = db.prepare(
     `SELECT COUNT(*) c FROM papers p JOIN users u ON p.user_id=u.id ${where}`
   ).get(...params).c;
 
-  res.json({ papers, total, page: Number(page), pages: Math.ceil(total / limit) });
+  // Return year range for filter UI
+  const yearRange = db.prepare(
+    `SELECT strftime('%Y', MIN(created_at)) AS min_year, strftime('%Y', MAX(created_at)) AS max_year
+     FROM papers WHERE status='approved'`
+  ).get();
+
+  res.json({ papers, total, page: Number(page), pages: Math.ceil(total / limit), yearRange });
 });
 
 // GET /api/research/mine
@@ -69,13 +99,18 @@ router.get('/mine', requireLogin, (req, res) => {
 
 // GET /api/research/:uuid
 router.get('/:uuid', (req, res) => {
-  const p = db.prepare(
-    `SELECT p.*,u.name AS author_name,u.department,u.uuid AS author_uuid,
+  let sql = `SELECT p.*,u.name AS author_name,u.department,u.uuid AS author_uuid,
             u.avatar_url AS author_avatar,u.reputation AS author_rep,u.level AS author_level,
             (SELECT COUNT(*) FROM endorsements WHERE paper_id=p.id) AS endorsements
      FROM papers p JOIN users u ON p.user_id=u.id
-     WHERE p.uuid=? AND p.status='approved'`
-  ).get(req.params.uuid);
+     WHERE p.uuid=?`;
+  
+  const params = [req.params.uuid];
+  if (req.session.role !== 'admin') {
+    sql += ` AND p.status='approved'`;
+  }
+
+  const p = db.prepare(sql).get(...params);
   if (!p) return res.status(404).json({ error: 'Not found' });
   db.prepare('UPDATE papers SET views=views+1 WHERE uuid=?').run(req.params.uuid);
   const files = db.prepare('SELECT id,file_name,file_path,file_type FROM paper_files WHERE paper_id=?').all(p.id);
@@ -108,10 +143,28 @@ router.get('/:uuid/download', (req, res) => {
   res.download(abs, p.file_name || path.basename(abs));
 });
 
+// GET /api/research/:uuid/view — view primary file in browser
+router.get('/:uuid/view', (req, res) => {
+  const p = db.prepare(
+    `SELECT file_path, file_name, status FROM papers WHERE uuid=?`
+  ).get(req.params.uuid);
+  if (!p) return res.status(404).json({ error: 'Not found' });
+  if (p.status !== 'approved' && req.session.role !== 'admin')
+    return res.status(403).json({ error: 'Unauthorized' });
+
+  const rel = String(p.file_path).replace(/^\/+/, '');
+  const abs = path.join(__dirname, '..', 'public', rel);
+  if (!fs.existsSync(abs)) return res.status(404).json({ error: 'File missing' });
+
+  res.sendFile(abs);
+});
+
 // GET /api/research/:uuid/files/:fileId/download — secure supporting file download
 router.get('/:uuid/files/:fileId/download', (req, res) => {
-  const paper = db.prepare(`SELECT id FROM papers WHERE uuid=? AND status='approved'`).get(req.params.uuid);
+  const paper = db.prepare(`SELECT id, status FROM papers WHERE uuid=?`).get(req.params.uuid);
   if (!paper) return res.status(404).json({ error: 'Not found' });
+  if (paper.status !== 'approved' && req.session.role !== 'admin')
+    return res.status(403).json({ error: 'Unauthorized' });
 
   const f = db.prepare(
     `SELECT file_path, file_name
@@ -120,18 +173,36 @@ router.get('/:uuid/files/:fileId/download', (req, res) => {
   ).get(Number(req.params.fileId), paper.id);
   if (!f) return res.status(404).json({ error: 'File not found' });
 
-  if (!String(f.file_path).startsWith('/uploads/'))
-    return res.status(400).json({ error: 'Invalid file path' });
-
-  // file_path is stored like "/uploads/filename.ext" (leading slash),
-  // so strip leading slashes to avoid path.join treating it as absolute.
   const rel = String(f.file_path).replace(/^\/+/, '');
   const abs = path.join(__dirname, '..', 'public', rel);
-  const publicRoot = path.join(__dirname, '..', 'public') + path.sep;
-  if (!abs.startsWith(publicRoot)) return res.status(400).json({ error: 'Invalid file path' });
-  if (!fs.existsSync(abs)) return res.status(404).json({ error: 'File missing on server' });
+  if (!fs.existsSync(abs)) return res.status(404).json({ error: 'File missing' });
 
-  res.download(abs, f.file_name || path.basename(abs));
+  res.download(abs, f.file_name);
+});
+
+// GET /api/research/:uuid/files/:fileId/content — get raw text content (for code viewer)
+router.get('/:uuid/files/:fileId/content', (req, res) => {
+  const paper = db.prepare(`SELECT id, status FROM papers WHERE uuid=?`).get(req.params.uuid);
+  if (!paper) return res.status(404).json({ error: 'Not found' });
+  if (paper.status !== 'approved' && req.session.role !== 'admin')
+    return res.status(403).json({ error: 'Unauthorized' });
+
+  const f = db.prepare(
+    `SELECT file_path
+     FROM paper_files
+     WHERE id=? AND paper_id=?`
+  ).get(Number(req.params.fileId), paper.id);
+  if (!f) return res.status(404).json({ error: 'File not found' });
+
+  const rel = String(f.file_path).replace(/^\/+/, '');
+  const abs = path.join(__dirname, '..', 'public', rel);
+  if (!fs.existsSync(abs)) return res.status(404).json({ error: 'File missing' });
+
+  const stats = fs.statSync(abs);
+  if (stats.size > 1024 * 1024) return res.status(400).json({ error: 'File too large for viewer' });
+
+  const content = fs.readFileSync(abs, 'utf8');
+  res.json({ content });
 });
 
 // POST /api/research — submit paper
@@ -166,6 +237,9 @@ router.post('/', requireLogin,
 
     // Award XP for submitting
     awardPoints(req.session.userId, 'paper_submit', 5, 20, uuid, `Submitted: ${title}`);
+
+    // Trigger AI Enrichment (Automation)
+    aiService.processPaper(info.lastInsertRowid);
 
     res.status(201).json({ ok: true, uuid, message: 'Paper submitted for review.' });
   }
