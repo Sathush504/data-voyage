@@ -1,5 +1,7 @@
 'use strict';
 const express = require('express');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db      = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
 const { sendEmail } = require('../config/mailer');
@@ -39,10 +41,10 @@ router.get('/submissions', (req, res) => {
   res.json({ rows, total, page: Number(page), pages: Math.ceil(total/limit) });
 });
 
-router.patch('/submissions/:uuid', (req, res) => {
+router.patch('/submissions/:uuid', [
+  body('status').isIn(['approved','rejected','review','pending']).withMessage('Invalid status')
+], validateRequest, (req, res) => {
   const { status } = req.body;
-  if (!['approved','rejected','review','pending'].includes(status))
-    return res.status(400).json({ error: 'Invalid status' });
 
   const before = db.prepare(
     `SELECT p.uuid,p.title,p.status,u.email AS author_email,u.name AS author_name,
@@ -60,7 +62,7 @@ router.patch('/submissions/:uuid', (req, res) => {
 
   // Email notification (approve/reject)
   if (before.author_email && before.notify_paper_status && (status === 'approved' || status === 'rejected') && before.status !== status) {
-    const baseUrl = process.env.APP_BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
     const paperLink = `${baseUrl}/?paper=${encodeURIComponent(before.uuid)}`;
     const subject = status === 'approved'
       ? 'Your Data Voyage paper was approved'
@@ -94,13 +96,16 @@ router.get('/users', (req, res) => {
   res.json(users);
 });
 
-router.patch('/users/:id', (req, res) => {
+router.patch('/users/:id', [
+  body('is_active').optional().isBoolean().withMessage('is_active must be a boolean'),
+  body('role').optional().isIn(['researcher','admin']).withMessage('Invalid role')
+], validateRequest, (req, res) => {
   const { is_active, role } = req.body;
   if (Number(req.params.id) === req.session.userId)
     return res.status(400).json({ error: "You cannot modify your own account." });
   if (is_active !== undefined)
-    db.prepare('UPDATE users SET is_active=? WHERE id=?').run(is_active ? 1:0, req.params.id);
-  if (role && ['researcher','admin'].includes(role))
+    db.prepare('UPDATE users SET is_active=? WHERE id=?').run(is_active === true || is_active === 'true' ? 1:0, req.params.id);
+  if (role)
     db.prepare('UPDATE users SET role=? WHERE id=?').run(role, req.params.id);
   db.prepare(`INSERT INTO audit_log (user_id,action,target,ip) VALUES (?,?,?,?)`)
     .run(req.session.userId, 'user_update', req.params.id, req.ip);

@@ -115,15 +115,22 @@
 
 /* ── PASSWORD WRAP ─────────────────────────────────── */
 .pw-wrap { position:relative; }
-.pw-wrap input { padding-right:44px; }
+.pw-wrap input { padding-right:44px; position:relative; z-index:1; }
 .pw-toggle {
   position:absolute; right:10px; top:50%; transform:translateY(-50%);
   background:none; border:none; cursor:pointer; font-size:1rem; padding:4px;
   opacity:0.5; transition:opacity 0.15s;
   display:flex; align-items:center; justify-content:center;
   line-height:1;
+  z-index: 5;
 }
 .pw-toggle:hover { opacity:1; }
+
+/* Hide default Edge password reveal icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
 
 /* ── FORM ERROR ─────────────────────────────────────── */
 .form-error-msg {

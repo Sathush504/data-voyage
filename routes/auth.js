@@ -213,7 +213,7 @@ router.post('/change-email', requireLogin, [
     VALUES (?,?,?,?)
   `).run(req.session.userId, newEmail, tokenHash, expiresAt);
 
-  const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const baseUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
   const verifyUrl = `${baseUrl.replace(/\/+$/,'')}/auth/verify-email-change?token=${rawToken}`;
 
   try {
@@ -290,7 +290,7 @@ router.post('/forgot-password', [
      VALUES (?, ?, datetime('now', ?))`
   ).run(user.id, tokenHash, `+${minutes} minutes`);
 
-  const baseUrl = process.env.APP_BASE_URL || `${req.protocol}://${req.get('host')}`;
+  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
   const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
   const subject = 'Reset your Data Voyage password';

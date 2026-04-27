@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 const db = require('./db');
 
 function baseUrl(req) {
-  const env = process.env.PUBLIC_BASE_URL;
+  const env = process.env.APP_URL;
   if (env) return env.replace(/\/+$/, '');
   const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'http').toString().split(',')[0].trim();
   const host = req.headers['x-forwarded-host'] || req.headers.host;
