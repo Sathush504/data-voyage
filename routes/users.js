@@ -3,6 +3,8 @@ const express = require('express');
 const multer  = require('multer');
 const path    = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db      = require('../config/db');
 const { requireLogin } = require('../middleware/auth');
 const { awardPoints, checkAndAwardBadges } = require('./reputation');
@@ -81,10 +83,12 @@ router.get('/:uuid', (req, res) => {
 });
 
 /* ── PUT /api/users/profile — update own profile ──────── */
-router.put('/profile', requireLogin, (req, res) => {
+router.put('/profile', requireLogin, [
+  body('name').trim().isLength({ min: 2, max: 100 }).withMessage('Name must be at least 2 characters'),
+  body('bio').optional().trim().isLength({ max: 1000 }),
+  body('department').optional().trim().isLength({ max: 100 })
+], validateRequest, (req, res) => {
   const { name, department, bio, website, twitter } = req.body;
-  if (!name || name.trim().length < 2)
-    return res.status(400).json({ error: 'Name must be at least 2 characters' });
 
   const wasComplete = (() => {
     const u = db.prepare('SELECT bio, department, avatar_url FROM users WHERE id=?').get(req.session.userId);

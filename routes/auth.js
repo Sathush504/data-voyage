@@ -3,7 +3,8 @@ const express  = require('express');
 const bcrypt   = require('bcryptjs');
 const crypto   = require('crypto');
 const { v4: uuidv4 } = require('uuid');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const passport = require('passport');
 const db       = require('../config/db');
 const { sendEmail, isEmailConfigured } = require('../config/mailer');
@@ -20,9 +21,7 @@ router.post('/register', [
     .matches(/[A-Z]/).withMessage('Must contain an uppercase letter')
     .matches(/[0-9]/).withMessage('Must contain a number'),
   body('department').optional().trim().isLength({ max: 100 })
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, async (req, res) => {
 
   const { name, email, password, department } = req.body;
   if (db.prepare('SELECT id FROM users WHERE email = ?').get(email))
@@ -58,9 +57,7 @@ router.post('/register', [
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').notEmpty()
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: 'Please enter a valid email and password.' });
+], validateRequest, async (req, res) => {
 
   const { email, password } = req.body;
   const user = db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email);
@@ -155,28 +152,6 @@ router.get('/me', requireLogin, (req, res) => {
   res.json(u || {});
 });
 
-// PUT /api/auth/profile  (delegates to users route logic)
-router.put('/profile', requireLogin, [
-  body('name').trim().isLength({ min: 2, max: 100 }),
-  body('bio').optional().trim().isLength({ max: 1000 }),
-  body('department').optional().trim().isLength({ max: 100 })
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
-
-  const { name, bio, department, website, twitter } = req.body;
-  db.prepare(
-    `UPDATE users SET name=?, bio=?, department=?, website=?, twitter=?,
-     updated_at=datetime('now') WHERE id=?`
-  ).run(name, bio || null, department || null, website || null, twitter || null, req.session.userId);
-
-  req.session.name = name;
-  const updated = db.prepare(
-    `SELECT id,uuid,name,email,role,department,bio,website,twitter,
-             avatar_url,reputation,xp,level FROM users WHERE id=?`
-  ).get(req.session.userId);
-  res.json(updated);
-});
 
 module.exports = router;
 
@@ -190,9 +165,7 @@ router.post('/change-password', requireLogin, [
     .matches(/[A-Z]/).withMessage('New password must contain an uppercase letter')
     .matches(/[0-9]/).withMessage('New password must contain a number'),
   body('confirmNewPassword').notEmpty().withMessage('Please confirm the new password')
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, async (req, res) => {
 
   const { currentPassword, newPassword, confirmNewPassword } = req.body;
   if (newPassword !== confirmNewPassword)
@@ -213,9 +186,7 @@ router.post('/change-password', requireLogin, [
 router.post('/change-email', requireLogin, [
   body('newEmail').isEmail().normalizeEmail().withMessage('Valid email required'),
   body('password').optional().isString()
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, async (req, res) => {
 
   const newEmail = req.body.newEmail;
   const u = db.prepare('SELECT id,email,password_hash,oauth_provider FROM users WHERE id=?').get(req.session.userId);
@@ -300,9 +271,7 @@ router.get('/verify-email-change', (req, res) => {
 // POST /api/auth/forgot-password
 router.post('/forgot-password', [
   body('email').isEmail().normalizeEmail().withMessage('Valid email required')
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, (req, res) => {
 
   const { email } = req.body;
   const user = db.prepare('SELECT id,email FROM users WHERE email=? AND is_active=1').get(email);
@@ -356,9 +325,7 @@ router.post('/reset-password', [
     .matches(/[A-Z]/).withMessage('New password must contain an uppercase letter')
     .matches(/[0-9]/).withMessage('New password must contain a number'),
   body('confirmNewPassword').notEmpty().withMessage('Please confirm the new password')
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, async (req, res) => {
 
   const { token, newPassword, confirmNewPassword } = req.body;
   if (newPassword !== confirmNewPassword)

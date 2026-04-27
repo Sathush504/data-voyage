@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
 const express     = require('express');
+require('express-async-errors');
 const session     = require('express-session');
 const Database    = require('better-sqlite3');
 const SQLiteStore = require('better-sqlite3-session-store')(session);
@@ -151,20 +152,25 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   try {
     if (req.session?.userId && req.sessionID) {
-      db.prepare(
-        `INSERT INTO user_sessions (session_id,user_id,ip,user_agent)
-         VALUES (?,?,?,?)
-         ON CONFLICT(session_id) DO UPDATE SET
-           user_id=excluded.user_id,
-           ip=excluded.ip,
-           user_agent=excluded.user_agent,
-           last_seen_at=datetime('now')`
-      ).run(
-        req.sessionID,
-        req.session.userId,
-        req.ip,
-        (req.headers['user-agent'] || '').slice(0, 300)
-      );
+      const now = Date.now();
+      const fiveMins = 5 * 60 * 1000;
+      if (!req.session.lastSeenAt || (now - req.session.lastSeenAt > fiveMins)) {
+        db.prepare(
+          `INSERT INTO user_sessions (session_id,user_id,ip,user_agent)
+           VALUES (?,?,?,?)
+           ON CONFLICT(session_id) DO UPDATE SET
+             user_id=excluded.user_id,
+             ip=excluded.ip,
+             user_agent=excluded.user_agent,
+             last_seen_at=datetime('now')`
+        ).run(
+          req.sessionID,
+          req.session.userId,
+          req.ip,
+          (req.headers['user-agent'] || '').slice(0, 300)
+        );
+        req.session.lastSeenAt = now;
+      }
     }
   } catch {}
   next();

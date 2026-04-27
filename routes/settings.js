@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db = require('../config/db');
 const { requireLogin } = require('../middleware/auth');
 
@@ -50,9 +51,7 @@ router.put('/me', requireLogin, [
   body('data_sharing').optional().isBoolean(),
   body('usage_tracking').optional().isBoolean(),
   body('two_factor_enabled').optional().isBoolean(),
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, (req, res) => {
 
   ensureSettingsRow(req.session.userId);
   const cur = db.prepare('SELECT * FROM user_settings WHERE user_id=?').get(req.session.userId) || {};

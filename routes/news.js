@@ -1,7 +1,8 @@
 'use strict';
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db      = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
 const router  = express.Router();
@@ -66,9 +67,7 @@ router.post('/', requireAdmin, [
   body('category').optional().trim(),
   body('body').optional().trim(),
   body('published').optional().isBoolean()
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, (req, res) => {
 
   const { title, summary, body: bodyText, category, published } = req.body;
   const uuid = uuidv4();
@@ -85,9 +84,7 @@ router.post('/', requireAdmin, [
 router.put('/:uuid', requireAdmin, [
   body('title').trim().isLength({ min: 3, max: 250 }),
   body('summary').trim().isLength({ min: 10 }),
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, (req, res) => {
 
   const { title, summary, body: bodyText, category, published } = req.body;
   db.prepare(

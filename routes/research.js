@@ -4,7 +4,8 @@ const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db      = require('../config/db');
 const { requireLogin, requireAdmin } = require('../middleware/auth');
 const { awardPoints, checkAndAwardBadges } = require('./reputation');
@@ -140,10 +141,8 @@ router.post('/', requireLogin,
     body('title').trim().isLength({ min:5, max:250 }).withMessage('Title must be 5–250 characters'),
     body('abstract').trim().isLength({ min:20 }).withMessage('Abstract must be at least 20 characters'),
     body('domain').trim().notEmpty().withMessage('Domain is required'),
-  ],
+  ], validateRequest,
   (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
     const { title, abstract, domain, keywords, co_authors } = req.body;
     const paperFile = req.files?.paper?.[0];

@@ -1,7 +1,8 @@
 'use strict';
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
 
@@ -13,9 +14,7 @@ router.post('/', [
   body('email').optional().isEmail().normalizeEmail(),
   body('subject').optional().trim().isLength({ max: 200 }),
   body('message').trim().isLength({ min: 10, max: 5000 }).withMessage('Message must be 10–5000 characters'),
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, (req, res) => {
 
   const { name, email, subject, message } = req.body;
   const uuid = uuidv4();

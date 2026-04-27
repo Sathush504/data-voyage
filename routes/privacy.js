@@ -1,7 +1,8 @@
 'use strict';
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middleware/validate');
 const db = require('../config/db');
 const { requireLogin } = require('../middleware/auth');
 
@@ -59,9 +60,7 @@ router.get('/export', requireLogin, (req, res) => {
 // DELETE /api/privacy/account — delete my account (requires password for local accounts)
 router.delete('/account', requireLogin, [
   body('password').optional().isString().isLength({ min: 1 }).withMessage('Password required')
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+], validateRequest, (req, res) => {
 
   const userId = req.session.userId;
   const u = db.prepare('SELECT id,email,oauth_provider,password_hash FROM users WHERE id=?').get(userId);
