@@ -92,10 +92,15 @@ app.use(helmet({
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"],
       imgSrc: ["'self'", 'data:', 'https:'],
-      fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com', 'https://fonts.googleapis.com', 'data:'],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       scriptSrc: ["'self'", 'https://code.iconify.design'],
-      connectSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        'https://api.iconify.design',
+        'https://api.simplesvg.com',
+        'https://api.unisvg.com',
+      ],
     }
   }
 }));
