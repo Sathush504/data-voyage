@@ -21,7 +21,10 @@ const API = {
       const t = await this._ensureCsrfToken();
       if (t) headers['X-CSRF-Token'] = t;
     }
-    return fetch(url, { credentials: 'include', ...opts, headers });
+    const res = await fetch(url, { credentials: 'include', ...opts, headers });
+    // If the server rejects the CSRF token, clear it so we re-fetch on the next request
+    if (res.status === 403) this._csrfToken = null;
+    return res;
   },
 
   // ── PUBLIC STATS (no auth needed) ───────────────────────
@@ -53,7 +56,8 @@ const API = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    return r.ok ? r.json() : r.json();
+    const j = await r.json().catch(() => ({}));
+    return r.ok ? j : { ok: false, error: j.error || 'Failed to save settings' };
   },
 
   // ── ACCOUNT SECURITY ───────────────────────────────────
