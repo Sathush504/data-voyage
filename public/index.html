@@ -263,11 +263,11 @@
       <div class="form-card-title"><div class="icon"><span class="iconify" data-icon="mdi:email-outline"></span></div>Send a Message</div>
       <form id="contact-form">
         <div class="form-row" style="margin-bottom:16px">
-          <div class="form-group"><label class="form-label">Name</label><input class="form-input" name="cname" type="text" placeholder="Your name"/></div>
-          <div class="form-group"><label class="form-label">Email</label><input class="form-input" name="cemail" type="email" placeholder="you@email.com"/></div>
+          <div class="form-group"><label class="form-label" for="cname">Name</label><input class="form-input" id="cname" name="cname" type="text" placeholder="Your name"/></div>
+          <div class="form-group"><label class="form-label" for="cemail">Email</label><input class="form-input" id="cemail" name="cemail" type="email" placeholder="you@email.com"/></div>
         </div>
-        <div class="form-group" style="margin-bottom:16px"><label class="form-label">Subject</label><input class="form-input" name="csubject" type="text" placeholder="How can we help?"/></div>
-        <div class="form-group" style="margin-bottom:22px"><label class="form-label">Message *</label><textarea class="form-textarea" name="cmessage" style="min-height:140px" placeholder="Write your message…" required></textarea></div>
+        <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="csubject">Subject</label><input class="form-input" id="csubject" name="csubject" type="text" placeholder="How can we help?"/></div>
+        <div class="form-group" style="margin-bottom:22px"><label class="form-label" for="cmessage">Message *</label><textarea class="form-textarea" id="cmessage" name="cmessage" style="min-height:140px" placeholder="Write your message…" required></textarea></div>
         <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Send Message →</button>
       </form>
     </div>
@@ -389,15 +389,15 @@
         <input type="hidden" name="token" />
         <div class="form-row" style="margin-bottom:16px">
           <div class="form-group">
-            <label class="form-label">New password</label>
+            <label class="form-label" for="reset-newPassword">New password</label>
             <div class="pw-wrap">
-              <input class="form-input" name="newPassword" type="password" required autocomplete="new-password"/>
+              <input class="form-input" id="reset-newPassword" name="newPassword" type="password" required autocomplete="new-password"/>
               <button type="button" class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Confirm new password</label>
-            <input class="form-input" name="confirmNewPassword" type="password" required autocomplete="new-password"/>
+            <label class="form-label" for="reset-confirmNewPassword">Confirm new password</label>
+            <input class="form-input" id="reset-confirmNewPassword" name="confirmNewPassword" type="password" required autocomplete="new-password"/>
           </div>
         </div>
         <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Reset password →</button>
@@ -457,18 +457,18 @@
       <div class="form-card reveal">
         <div class="form-card-title"><div class="icon"><span class="iconify" data-icon="mdi:file-document-outline"></span></div>Research Details</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Title *</label><input class="form-input" name="title" type="text" placeholder="Full title of your research" required/></div>
-          <div class="form-group"><label class="form-label">Research Type</label><select class="form-select" name="research_type"><option>Research Paper</option><option>Dataset</option><option>Dashboard</option><option>Literature Review</option></select></div>
+          <div class="form-group"><label class="form-label" for="upload-title">Title *</label><input class="form-input" id="upload-title" name="title" type="text" placeholder="Full title of your research" required/></div>
+          <div class="form-group"><label class="form-label" for="upload-research-type">Research Type</label><select class="form-select" id="upload-research-type" name="research_type"><option>Research Paper</option><option>Dataset</option><option>Dashboard</option><option>Literature Review</option></select></div>
         </div>
-        <div class="form-row full"><div class="form-group"><label class="form-label">Abstract *</label><textarea class="form-textarea" name="abstract" placeholder="Concise summary of your research, methodology, and key findings…" required></textarea></div></div>
+        <div class="form-row full"><div class="form-group"><label class="form-label" for="upload-abstract">Abstract *</label><textarea class="form-textarea" id="upload-abstract" name="abstract" placeholder="Concise summary of your research, methodology, and key findings…" required></textarea></div></div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Research Domain *</label><select class="form-select" name="domain" required><option value="Machine Learning">Machine Learning</option><option value="Statistics">Statistics</option><option value="NLP">Natural Language Processing</option><option value="Computer Vision">Computer Vision</option><option value="Graph ML">Graph Machine Learning</option><option value="Bioinformatics">Bioinformatics</option><option value="Robotics">Robotics</option><option value="Time Series">Time Series</option></select></div>
-          <div class="form-group"><label class="form-label">Keywords</label><input class="form-input" name="keywords" type="text" placeholder="e.g. deep learning, forecasting, NLP"/></div>
+          <div class="form-group"><label class="form-label" for="upload-domain">Research Domain *</label><select class="form-select" id="upload-domain" name="domain" required><option value="Machine Learning">Machine Learning</option><option value="Statistics">Statistics</option><option value="NLP">Natural Language Processing</option><option value="Computer Vision">Computer Vision</option><option value="Graph ML">Graph Machine Learning</option><option value="Bioinformatics">Bioinformatics</option><option value="Robotics">Robotics</option><option value="Time Series">Time Series</option></select></div>
+          <div class="form-group"><label class="form-label" for="upload-keywords">Keywords</label><input class="form-input" id="upload-keywords" name="keywords" type="text" placeholder="e.g. deep learning, forecasting, NLP"/></div>
         </div>
       </div>
       <div class="form-card reveal delay-1">
         <div class="form-card-title"><div class="icon">👤</div>Authors</div>
-        <div class="form-row full"><div class="form-group"><label class="form-label">Co-Authors</label><input class="form-input" name="co_authors" type="text" placeholder="Separate names with commas"/></div></div>
+        <div class="form-row full"><div class="form-group"><label class="form-label" for="upload-co-authors">Co-Authors</label><input class="form-input" id="upload-co-authors" name="co_authors" type="text" placeholder="Separate names with commas"/></div></div>
       </div>
       <div class="form-card reveal delay-2">
         <div class="form-card-title"><div class="icon">📁</div>Upload Files</div>
@@ -477,7 +477,7 @@
           <div class="dropzone-icon">⬆</div><h4 id="paper-dz-text">Click or drag to upload your research paper</h4><p>PDF, DOC, DOCX · Max 50MB</p>
         </div>
         <div style="margin-top:20px">
-          <label class="form-label" style="margin-bottom:10px;display:block">Supporting Files (Optional)</label>
+          <label class="form-label" for="support-file-input" style="margin-bottom:10px;display:block">Supporting Files (Optional)</label>
           <div class="dropzone" data-file-open="support-file-input">
             <input type="file" id="support-file-input" name="support" multiple accept=".csv,.zip,.ipynb,.r,.py,.xlsx" style="display:none" data-dropzone-text="support-dz-text"/>
             <div class="dropzone-icon" style="font-size:1.8rem"><span class="iconify" data-icon="mdi:database-outline"></span></div><h4 id="support-dz-text">Datasets, code, or supplementary materials</h4><p>CSV, ZIP, IPYNB, R, PY, XLSX · Max 200MB</p>
@@ -591,8 +591,8 @@
     <h2 class="modal-title">Welcome back</h2>
     <p class="modal-subtitle">Sign in to your Data Voyage account</p>
     <form id="login-form">
-      <div class="form-group" style="margin-bottom:16px"><label class="form-label">Email</label><input class="form-input" name="email" type="email" placeholder="your@email.com" required autocomplete="email"/></div>
-      <div class="form-group" style="margin-bottom:24px"><label class="form-label">Password</label><div class="pw-wrap"><input class="form-input" name="password" type="password" placeholder="Your password" required autocomplete="current-password"/><button type="button" class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button></div></div>
+      <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="login-email">Email</label><input class="form-input" id="login-email" name="email" type="email" placeholder="your@email.com" required autocomplete="email"/></div>
+      <div class="form-group" style="margin-bottom:24px"><label class="form-label" for="login-password">Password</label><div class="pw-wrap"><input class="form-input" id="login-password" name="password" type="password" placeholder="Your password" required autocomplete="current-password"/><button type="button" class="pw-toggle"><span class="iconify" data-icon="mdi:eye-outline"></span></button></div></div>
       <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Sign In →</button>
     </form>
     <div style="display:flex;justify-content:center;margin-top:12px">
@@ -658,13 +658,13 @@
     <button class="modal-close" data-close-modal>✕</button>
     <h2 class="modal-title">New News Article</h2>
     <form id="admin-news-form">
-      <div class="form-group" style="margin-bottom:16px"><label class="form-label">Title *</label><input class="form-input" name="news_title" type="text" required/></div>
+      <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="news_title">Title *</label><input class="form-input" id="news_title" name="news_title" type="text" required/></div>
       <div class="form-row" style="margin-bottom:16px">
-        <div class="form-group"><label class="form-label">Category</label><select class="form-select" name="news_category"><option>Announcement</option><option>Award</option><option>Conference</option><option>Research</option><option>Collaboration</option><option>Funding</option><option>Education</option></select></div>
-        <div class="form-group" style="justify-content:flex-end;padding-top:24px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:var(--gray-600)"><input type="checkbox" name="news_published" style="width:16px;height:16px;accent-color:var(--primary)"/> Publish now</label></div>
+        <div class="form-group"><label class="form-label" for="news_category">Category</label><select class="form-select" id="news_category" name="news_category"><option>Announcement</option><option>Award</option><option>Conference</option><option>Research</option><option>Collaboration</option><option>Funding</option><option>Education</option></select></div>
+        <div class="form-group" style="justify-content:flex-end;padding-top:24px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.875rem;color:var(--gray-600)"><input type="checkbox" id="news_published" name="news_published" style="width:16px;height:16px;accent-color:var(--primary)"/> Publish now</label></div>
       </div>
-      <div class="form-group" style="margin-bottom:16px"><label class="form-label">Summary *</label><textarea class="form-textarea" name="news_summary" style="min-height:80px" required></textarea></div>
-      <div class="form-group" style="margin-bottom:24px"><label class="form-label">Body (optional)</label><textarea class="form-textarea" name="news_body" style="min-height:100px"></textarea></div>
+      <div class="form-group" style="margin-bottom:16px"><label class="form-label" for="news_summary">Summary *</label><textarea class="form-textarea" id="news_summary" name="news_summary" style="min-height:80px" required></textarea></div>
+      <div class="form-group" style="margin-bottom:24px"><label class="form-label" for="news_body">Body (optional)</label><textarea class="form-textarea" id="news_body" name="news_body" style="min-height:100px"></textarea></div>
       <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Create Article →</button>
     </form>
   </div>
@@ -694,8 +694,8 @@
     <p class="modal-subtitle">Enter your email and we’ll generate a reset link.</p>
     <form id="forgot-password-form">
       <div class="form-group" style="margin-bottom:18px">
-        <label class="form-label">Email</label>
-        <input class="form-input" name="email" type="email" placeholder="your@email.com" required autocomplete="email"/>
+        <label class="form-label" for="forgot-email">Email</label>
+        <input class="form-input" id="forgot-email" name="email" type="email" placeholder="your@email.com" required autocomplete="email"/>
       </div>
       <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Send reset link →</button>
     </form>
