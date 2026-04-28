@@ -7,17 +7,18 @@
 
   <!-- ── Primary SEO ──────────────────────────────────────── -->
   <title>Data Voyage — General Sir John Kotelawala Defence University Research Platform</title>
-  <meta name="description" content="Data Voyage is the official research platform of General Sir John Kotelawala Defence University (KDU), dedicated to publishing and discovering academic papers in Data Science, Machine Learning, and NLP." />
+  <meta name="description" content="Data Voyage is the official research platform of General Sir John Kotelawala Defence University (KDU). Discover and publish academic research in Data Science, AI, Machine Learning, and NLP." />
   <meta name="keywords" content="General Sir John Kotelawala Defence University, KDU Data Voyage, KDU Data Science, Data Science Voyage, KDU research, university research platform, academic papers, data science, machine learning, NLP, computer vision, research repository, scholarly articles, peer endorsement" />
   <meta name="author" content="Data Voyage" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://dvoyager.com/" />
+  <meta name="theme-color" content="#0901FA" />
 
   <!-- ── Open Graph (Facebook, LinkedIn previews) ─────────── -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://dvoyager.com/" />
-  <meta property="og:title" content="Data Voyage — University Research Platform" />
-  <meta property="og:description" content="Publish, discover, and endorse academic research. Data Voyage connects researchers across domains like Machine Learning, NLP, and Data Science." />
+  <meta property="og:title" content="Data Voyage — KDU Research Platform" />
+  <meta property="og:description" content="Official research repository for General Sir John Kotelawala Defence University. Publish and discover scholarly papers in Data Science and AI." />
   <meta property="og:image" content="https://dvoyager.com/images/data_voyage_logo.png" />
   <meta property="og:site_name" content="Data Voyage" />
   <meta property="og:locale" content="en_US" />
@@ -25,28 +26,44 @@
   <!-- ── Twitter Card ─────────────────────────────────────── -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://dvoyager.com/" />
-  <meta name="twitter:title" content="Data Voyage — University Research Platform" />
-  <meta name="twitter:description" content="Publish, discover, and endorse academic research. Data Voyage connects researchers across domains like Machine Learning, NLP, and Data Science." />
+  <meta name="twitter:title" content="Data Voyage — KDU Research Platform" />
+  <meta name="twitter:description" content="Official research repository for General Sir John Kotelawala Defence University. Publish and discover scholarly papers in Data Science and AI." />
   <meta name="twitter:image" content="https://dvoyager.com/images/data_voyage_logo.png" />
 
   <!-- ── Structured Data (JSON-LD) ────────────────────────── -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Data Voyage",
-    "url": "https://dvoyager.com",
-    "description": "A university research platform for publishing and discovering academic research papers across fields like Machine Learning, Data Science, and NLP.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://dvoyager.com/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Data Voyage",
+      "url": "https://dvoyager.com",
+      "publisher": {
+        "@type": "EducationalOrganization",
+        "name": "General Sir John Kotelawala Defence University",
+        "url": "https://kdu.ac.lk",
+        "logo": "https://dvoyager.com/images/data_voyage_logo.png"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "General Sir John Kotelawala Defence University",
+      "alternateName": "KDU",
+      "url": "https://dvoyager.com",
+      "logo": "https://dvoyager.com/images/data_voyage_logo.png",
+      "sameAs": [
+        "https://www.facebook.com/kdu.ac.lk",
+        "https://twitter.com/kdulanka",
+        "https://www.linkedin.com/school/general-sir-john-kotelawala-defence-university/"
+      ]
     }
-  }
+  ]
   </script>
 
   <!-- ── Favicon & Fonts ──────────────────────────────────── -->
   <link rel="icon" href="/images/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/images/data_voyage_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap"
@@ -69,31 +86,31 @@
         style="height:32px; width:auto; border-radius:4px; margin-right:8px;" />Data Voyage
     </div>
     <ul class="nav-links">
-      <li><a data-page="home" class="active">Home</a></li>
+      <li><a data-page="home" class="active" title="Go to Home" aria-label="Home Page">Home</a></li>
       <li class="nav-has-dropdown">
-        <a data-page="repo">Research</a>
+        <a data-page="repo" title="Explore Research Repository" aria-label="Research Repository">Research</a>
         <div class="nav-dropdown">
           <div class="nav-dropdown-section">
             <div class="nav-dropdown-title">By domain</div>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Machine Learning">Machine Learning</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Statistics">Statistics</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="NLP">Natural Language Processing</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Computer Vision">Computer Vision</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Graph ML">Graph ML</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Bioinformatics">Bioinformatics</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Robotics">Robotics</button>
-            <button class="nav-dd-link" data-go="repo" data-repo-domain="Time Series">Time Series</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Machine Learning" title="Search Machine Learning papers">Machine Learning</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Statistics" title="Search Statistics papers">Statistics</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="NLP" title="Search NLP papers">Natural Language Processing</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Computer Vision" title="Search Computer Vision papers">Computer Vision</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Graph ML" title="Search Graph ML papers">Graph ML</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Bioinformatics" title="Search Bioinformatics papers">Bioinformatics</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Robotics" title="Search Robotics papers">Robotics</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-domain="Time Series" title="Search Time Series papers">Time Series</button>
           </div>
           <div class="nav-dropdown-section">
             <div class="nav-dropdown-title">Quick actions</div>
-            <button class="nav-dd-link" data-go="repo" data-repo-latest="1">Latest papers</button>
-            <button class="nav-dd-link" data-go="upload">Submit a paper</button>
+            <button class="nav-dd-link" data-go="repo" data-repo-latest="1" title="View latest submissions">Latest papers</button>
+            <button class="nav-dd-link" data-go="upload" title="Submit your research paper">Submit a paper</button>
           </div>
         </div>
       </li>
-      <li><a data-page="dashboards">Dashboards</a></li>
+      <li><a data-page="dashboards" title="View Research Analytics" aria-label="Analytics Dashboards">Dashboards</a></li>
       <li class="nav-has-dropdown">
-        <a data-page="news">News</a>
+        <a data-page="news" title="Latest News and Announcements" aria-label="News Section">News</a>
         <div class="nav-dropdown">
           <div class="nav-dropdown-section">
             <div class="nav-dropdown-title">Categories</div>
