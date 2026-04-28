@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://dvoyager.com/sitemap.xml
