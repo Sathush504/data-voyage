@@ -125,6 +125,19 @@ Optional:
 - routes - API routes
 - uploads - user-uploaded files (avatars)
 
+## Deployment
+
+### Hostinger (Business Plan)
+
+1.  **Enable Node.js**: Use the Node.js selector in hPanel and select Node.js 18 or 20.
+2.  **Deploy Code**: Link your GitHub repository via the **GIT** section in hPanel.
+3.  **Install Dependencies**: Use SSH to run `npm install --production` in your `public_html` directory.
+4.  **Environment Variables**: Create a `.env` file in the root with your production secrets (see `.env.example`).
+5.  **Process Management**: Use **PM2** to keep the app running: `pm2 start server.js --name "data-voyage"`.
+6.  **SSL**: Enable free SSL (Let's Encrypt) via the **Security** tab.
+
+For a detailed walkthrough, refer to [walkthrough.md](file:///home/rudy/.gemini/antigravity/brain/6c646045-9098-4982-a8a0-ce370b02f24b/walkthrough.md).
+
 ## Tests
 
 Manual test scenarios are tracked in test-cases.md.
