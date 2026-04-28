@@ -2,31 +2,31 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { validateRequest } = require('../middleware/validate');
-const db      = require('../config/db');
+const db = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
 const { sendEmail } = require('../config/mailer');
-const router  = express.Router();
+const router = express.Router();
 
 router.use(requireAdmin);
 
 router.get('/stats', (req, res) => {
   res.json({
-    totalPapers:    db.prepare(`SELECT COUNT(*) c FROM papers`).get().c,
-    pendingPapers:  db.prepare(`SELECT COUNT(*) c FROM papers WHERE status='pending'`).get().c,
-    reviewPapers:   db.prepare(`SELECT COUNT(*) c FROM papers WHERE status='review'`).get().c,
+    totalPapers: db.prepare(`SELECT COUNT(*) c FROM papers`).get().c,
+    pendingPapers: db.prepare(`SELECT COUNT(*) c FROM papers WHERE status='pending'`).get().c,
+    reviewPapers: db.prepare(`SELECT COUNT(*) c FROM papers WHERE status='review'`).get().c,
     approvedPapers: db.prepare(`SELECT COUNT(*) c FROM papers WHERE status='approved'`).get().c,
-    totalUsers:     db.prepare(`SELECT COUNT(*) c FROM users WHERE role='researcher'`).get().c,
-    activeUsers:    db.prepare(`SELECT COUNT(*) c FROM users WHERE is_active=1`).get().c,
-    totalNews:      db.prepare(`SELECT COUNT(*) c FROM news`).get().c,
-    publishedNews:  db.prepare(`SELECT COUNT(*) c FROM news WHERE published=1`).get().c,
-    badgesAwarded:  db.prepare(`SELECT COUNT(*) c FROM user_badges`).get().c,
-    endorsements:   db.prepare(`SELECT COUNT(*) c FROM endorsements`).get().c,
+    totalUsers: db.prepare(`SELECT COUNT(*) c FROM users WHERE role='researcher'`).get().c,
+    activeUsers: db.prepare(`SELECT COUNT(*) c FROM users WHERE is_active=1`).get().c,
+    totalNews: db.prepare(`SELECT COUNT(*) c FROM news`).get().c,
+    publishedNews: db.prepare(`SELECT COUNT(*) c FROM news WHERE published=1`).get().c,
+    badgesAwarded: db.prepare(`SELECT COUNT(*) c FROM user_badges`).get().c,
+    endorsements: db.prepare(`SELECT COUNT(*) c FROM endorsements`).get().c,
   });
 });
 
 router.get('/submissions', (req, res) => {
   const { status = 'all', page = 1 } = req.query;
-  const limit = 20, offset = (Number(page)-1)*limit;
+  const limit = 20, offset = (Number(page) - 1) * limit;
   const params = [];
   let where = '';
   if (status !== 'all') { where = 'WHERE p.status=?'; params.push(status); }
@@ -38,11 +38,11 @@ router.get('/submissions', (req, res) => {
      ${where} ORDER BY p.created_at DESC LIMIT ? OFFSET ?`
   ).all(...params, limit, offset);
   const total = db.prepare(`SELECT COUNT(*) c FROM papers p ${where}`).get(...params).c;
-  res.json({ rows, total, page: Number(page), pages: Math.ceil(total/limit) });
+  res.json({ rows, total, page: Number(page), pages: Math.ceil(total / limit) });
 });
 
 router.patch('/submissions/:uuid', [
-  body('status').isIn(['approved','rejected','review','pending']).withMessage('Invalid status')
+  body('status').isIn(['approved', 'rejected', 'review', 'pending']).withMessage('Invalid status')
 ], validateRequest, (req, res) => {
   const { status } = req.body;
 
@@ -78,7 +78,7 @@ router.patch('/submissions/:uuid', [
     `;
     (async () => {
       try { await sendEmail({ to: before.author_email, subject, html, text: `${subject}\n${paperLink}` }); }
-      catch {}
+      catch { }
     })();
   }
 
@@ -98,13 +98,13 @@ router.get('/users', (req, res) => {
 
 router.patch('/users/:id', [
   body('is_active').optional().isBoolean().withMessage('is_active must be a boolean'),
-  body('role').optional().isIn(['researcher','admin']).withMessage('Invalid role')
+  body('role').optional().isIn(['researcher', 'admin']).withMessage('Invalid role')
 ], validateRequest, (req, res) => {
   const { is_active, role } = req.body;
   if (Number(req.params.id) === req.session.userId)
     return res.status(400).json({ error: "You cannot modify your own account." });
   if (is_active !== undefined)
-    db.prepare('UPDATE users SET is_active=? WHERE id=?').run(is_active === true || is_active === 'true' ? 1:0, req.params.id);
+    db.prepare('UPDATE users SET is_active=? WHERE id=?').run(is_active === true || is_active === 'true' ? 1 : 0, req.params.id);
   if (role)
     db.prepare('UPDATE users SET role=? WHERE id=?').run(role, req.params.id);
   db.prepare(`INSERT INTO audit_log (user_id,action,target,ip) VALUES (?,?,?,?)`)
@@ -113,10 +113,29 @@ router.patch('/users/:id', [
 });
 
 router.delete('/users/:id', (req, res) => {
-  if (Number(req.params.id) === req.session.userId)
+  const userId = Number(req.params.id);
+  if (userId === req.session.userId)
     return res.status(400).json({ error: "You cannot delete your own account." });
-  db.prepare('DELETE FROM users WHERE id=?').run(req.params.id);
-  res.json({ ok: true });
+
+  try {
+    const tx = db.transaction(() => {
+      // Cleanup dependent tables that might lack CASCADE in existing DBs
+      db.prepare('DELETE FROM news WHERE user_id=?').run(userId);
+      db.prepare('DELETE FROM audit_log WHERE user_id=?').run(userId);
+      db.prepare('DELETE FROM user_sessions WHERE user_id=?').run(userId);
+      db.prepare('DELETE FROM user_settings WHERE user_id=?').run(userId);
+      db.prepare('DELETE FROM email_change_requests WHERE user_id=?').run(userId);
+      db.prepare('DELETE FROM password_resets WHERE user_id=?').run(userId);
+
+      // Finally delete the user
+      db.prepare('DELETE FROM users WHERE id=?').run(userId);
+    });
+    tx();
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Delete user error:', err);
+    res.status(500).json({ error: 'Failed to delete user. They may have active dependencies.' });
+  }
 });
 
 router.get('/audit', (req, res) => {

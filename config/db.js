@@ -71,7 +71,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS news (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid       TEXT    NOT NULL UNIQUE,
-    user_id    INTEGER NOT NULL REFERENCES users(id),
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title      TEXT    NOT NULL,
     summary    TEXT    NOT NULL,
     body       TEXT,
@@ -133,7 +133,7 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS audit_log (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id    INTEGER REFERENCES users(id),
+    user_id    INTEGER REFERENCES users(id) ON DELETE SET NULL,
     action     TEXT    NOT NULL,
     target     TEXT,
     ip         TEXT,
