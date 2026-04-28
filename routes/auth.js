@@ -116,7 +116,7 @@ router.get('/oauth/:provider', (req, res, next) => {
   const scopes = {
     google: ['profile', 'email'],
     github: ['user:email'],
-    linkedin: ['r_liteprofile', 'r_emailaddress']
+    linkedin: ['openid', 'profile', 'email']
   };
   passport.authenticate(p, { scope: scopes[p] })(req, res, next);
 });

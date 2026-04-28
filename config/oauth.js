@@ -97,19 +97,19 @@ function setupStrategies(app) {
     }));
   }
 
-  // LinkedIn
+  // LinkedIn (OIDC Version)
   if (process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET) {
     passport.use(new LinkedInStrategy({
       clientID: process.env.LINKEDIN_CLIENT_ID,
       clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
       callbackURL: '/api/auth/oauth/linkedin/callback',
-      scope: ['r_liteprofile', 'r_emailaddress'],
+      scope: ['openid', 'profile', 'email'],
       state: true,
       passReqToCallback: true,
     }, async (req, accessToken, refreshToken, profile, done) => {
       try {
-        const email = profile?.emails?.[0]?.value || null;
-        const avatarUrl = profile?.photos?.[0]?.value || null;
+        const email = profile?.emails?.[0]?.value || profile?._json?.email || null;
+        const avatarUrl = profile?.photos?.[0]?.value || profile?._json?.picture || null;
         const r = await ensureUser({
           provider: 'linkedin',
           providerId: profile.id,
